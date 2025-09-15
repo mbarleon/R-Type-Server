@@ -1,7 +1,8 @@
 #include <iostream>
+#include <rtype_ecs.hpp>
 
 int main(void)
 {
-    std::cout << "Hello, World!" << std::endl;
+    std::cout << rtype_ecs_hello() << std::endl;
     return 0;
 }

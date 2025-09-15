@@ -69,7 +69,7 @@ function _all() {
 }
 
 function _debug() {
-    _configure_and_build "Debug" -DZAP_SRV_ENABLE_DEBUG=ON
+    _configure_and_build "Debug" -DENABLE_DEBUG=ON
 }
 
 function _tests_run()
@@ -119,7 +119,10 @@ function _clean()
 function _fclean()
 {
     _clean
-    rm -rf r-type_server r-type_server.exe unit_tests plugins code_coverage.txt unit_tests-*.profraw unit_tests.profdata vgcore* cmake-build-debug
+    rm -rf r-type_ecs \
+        libr-type_ecs.so libr-type_ecs.dylib \
+        r-type_ecs.dll r-type_ecs.lib r-type_ecs.exp r-type_ecs.a \
+        r-type_server r-type_server.exe unit_tests plugins code_coverage.txt unit_tests-*.profraw unit_tests.profdata vgcore* cmake-build-debug
 }
 
 if [ $# -eq 0 ]; then

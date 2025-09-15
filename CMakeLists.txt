@@ -28,6 +28,14 @@ target_include_directories(r-type_server PRIVATE
   ${CMAKE_SOURCE_DIR}/include
 )
 
+add_subdirectory(ecs)
+target_include_directories(r-type_server PRIVATE ${CMAKE_SOURCE_DIR}/ecs/include)
+target_link_libraries(r-type_server PRIVATE r-type_ecs)
+
+if(APPLE OR UNIX)
+  set_target_properties(r-type_server PROPERTIES BUILD_RPATH "${CMAKE_SOURCE_DIR}")
+endif()
+
 function(enable_strict_warnings tgt)
   if (MSVC)
     target_compile_options(${tgt} PRIVATE
@@ -69,4 +77,3 @@ option(ENABLE_DEBUG "Enable debug macros and flags" OFF)
 if(ENABLE_DEBUG)
   target_compile_definitions(r-type_server PRIVATE r-type_server_DEBUG=1)
 endif()
-

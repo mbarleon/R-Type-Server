@@ -61,7 +61,7 @@ function Invoke-ConfigureAndBuild([string]$BuildType, [string[]]$ExtraFlags) {
 }
 
 function Invoke-BuildRelease() { Invoke-ConfigureAndBuild -BuildType "Release" -ExtraFlags @() }
-function Invoke-BuildDebug()   { Invoke-ConfigureAndBuild -BuildType "Debug"   -ExtraFlags @("-DZAP_SRV_ENABLE_DEBUG=ON") }
+function Invoke-BuildDebug()   { Invoke-ConfigureAndBuild -BuildType "Debug"   -ExtraFlags @("-DENABLE_DEBUG=ON") }
 
 function Invoke-RunTests() {
     Ensure-Tools
@@ -110,6 +110,9 @@ function Invoke-Clean() {
 function Invoke-FClean() {
     Invoke-Clean
     $paths = @(
+        "r-type_ecs",
+        "libr-type_ecs.so","libr-type_ecs.dylib",
+        "r-type_ecs.dll","r-type_ecs.lib","r-type_ecs.a","r-type_ecs.exp",
         "r-type_server","r-type_server.exe","unit_tests","plugins","code_coverage.txt",
         "unit_tests-*.profraw","unit_tests.profdata","vgcore*","cmake-build-debug"
     )

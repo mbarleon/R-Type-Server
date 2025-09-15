@@ -51,4 +51,7 @@ build/
 !.github/CODEOWNERS
 !CMakeLists.txt
 *.exe
-
+*.dll
+*.dylib
+*.exp
+*.lib
