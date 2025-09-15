@@ -18,7 +18,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: ${{ fromJSON(vars.ENABLE_MACOS == 'true'
+          && '["ubuntu-latest","windows-latest","macos-latest"]'
+          || '["ubuntu-latest","windows-latest"]') }} 
 
     steps:
       - name: Checkout repository
@@ -87,6 +89,18 @@ jobs:
       - name: Ensure cmake & ninja (macOS)
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
+          set -e
+          HAVE_CMAKE=0
+          HAVE_NINJA=0
+          command -v cmake >/dev/null 2>&1 && HAVE_CMAKE=1
+          command -v ninja >/dev/null 2>&1 && HAVE_NINJA=1
+          if [ "$HAVE_CMAKE" = 1 ] && [ "$HAVE_NINJA" = 1 ]; then
+            echo "::notice::cmake and ninja already available:"
+            cmake --version | head -n1
+            ninja --version
+            exit 0
+          fi
+
           if ! command -v brew >/dev/null 2>&1; then
             /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
             eval "$(/opt/homebrew/bin/brew shellenv)" || true
