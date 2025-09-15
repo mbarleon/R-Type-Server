@@ -34,7 +34,6 @@ jobs:
       - name: Ensure cmake & ninja (Ubuntu)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
-          sudo apt-get update
           sudo apt-get install -y cmake ninja-build
           echo "::notice::$(cmake --version | head -n1)"
           echo "::notice::$(ninja --version)"
@@ -124,7 +123,7 @@ jobs:
         run: |
           if (Test-Path ./build.ps1) {
             Write-Host "::notice file=build.ps1::Running build.ps1…"
-            ./build.ps1
+            pwsh -NoProfile -ExecutionPolicy Bypass -File ./build.ps1
             if ($LASTEXITCODE -ne 0) { exit 84 }
           } elseif (Test-Path ./build.sh) {
             Write-Host "::notice file=build.sh::Running build.sh via Git Bash…"

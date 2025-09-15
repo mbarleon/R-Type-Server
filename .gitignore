@@ -50,4 +50,5 @@ build/
 
 !.github/CODEOWNERS
 !CMakeLists.txt
+*.exe
 
