@@ -114,14 +114,12 @@ function _tests_run()
 function _clean()
 {
     rm -rf build
-    external/lib-cextend/build.sh -c
 }
 
 function _fclean()
 {
     _clean
-    rm -rf r-type_server unit_tests plugins code_coverage.txt unit_tests-*.profraw unit_tests.profdata vgcore* cmake-build-debug libs/*
-    external/lib-cextend/build.sh -f
+    rm -rf r-type_server r-type_server.exe unit_tests plugins code_coverage.txt unit_tests-*.profraw unit_tests.profdata vgcore* cmake-build-debug
 }
 
 if [ $# -eq 0 ]; then
@@ -172,4 +170,3 @@ EOF
             ;;
     esac
 done
-

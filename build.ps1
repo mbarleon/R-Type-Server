@@ -105,25 +105,16 @@ function Invoke-RunTests() {
 
 function Invoke-Clean() {
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue build
-    if (Test-Path external/lib-cextend/build.ps1) {
-        & external/lib-cextend/build.ps1 -c
-    } elseif (Test-Path external/lib-cextend/build.sh) {
-        bash external/lib-cextend/build.sh -c
-    }
 }
+
 function Invoke-FClean() {
     Invoke-Clean
     $paths = @(
-        "r-type_server","unit_tests","plugins","code_coverage.txt",
+        "r-type_server","r-type_server.exe","unit_tests","plugins","code_coverage.txt",
         "unit_tests-*.profraw","unit_tests.profdata","vgcore*","cmake-build-debug"
     )
     foreach ($p in $paths) { Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $p }
     if (Test-Path libs) { Get-ChildItem libs | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue }
-    if (Test-Path external/lib-cextend/build.ps1) {
-        & external/lib-cextend/build.ps1 -f
-    } elseif (Test-Path external/lib-cextend/build.sh) {
-        bash external/lib-cextend/build.sh -f
-    }
 }
 
 if ($Help) {
@@ -148,4 +139,3 @@ elseif ($Debug)    { Invoke-BuildDebug; exit 0 }
 elseif ($Tests)    { Invoke-RunTests;   exit 0 }
 elseif ($Re)       { Invoke-FClean; Invoke-BuildRelease; exit 0 }
 else               { Invoke-BuildRelease }
-
