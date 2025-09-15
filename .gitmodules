@@ -1,4 +1,4 @@
 [submodule "ecs"]
 	path = ecs
-	url = git@github.com:mbarleon/R-Type-ECS.git
+	url = https://github.com/mbarleon/R-Type-ECS.git
 	branch = main
