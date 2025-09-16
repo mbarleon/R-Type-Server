@@ -10,20 +10,20 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-if(UNIX AND NOT APPLE)
-  set(CMAKE_SKIP_BUILD_RPATH FALSE)
-  set(CMAKE_SKIP_INSTALL_RPATH FALSE)
-  set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  set(CMAKE_BUILD_RPATH  "\$ORIGIN")
-  set(CMAKE_INSTALL_RPATH "\$ORIGIN")
-elseif(APPLE)
-  set(CMAKE_SKIP_BUILD_RPATH FALSE)
-  set(CMAKE_SKIP_INSTALL_RPATH FALSE)
-  set(CMAKE_MACOSX_RPATH TRUE)
-  set(CMAKE_BUILD_RPATH  "@loader_path")
-  set(CMAKE_INSTALL_RPATH "@loader_path")
-endif()
+if (UNIX AND NOT APPLE)
+    set(CMAKE_SKIP_BUILD_RPATH FALSE)
+    set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+    set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    set(CMAKE_BUILD_RPATH "\$ORIGIN")
+    set(CMAKE_INSTALL_RPATH "\$ORIGIN")
+elseif (APPLE)
+    set(CMAKE_SKIP_BUILD_RPATH FALSE)
+    set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+    set(CMAKE_MACOSX_RPATH TRUE)
+    set(CMAKE_BUILD_RPATH "@loader_path")
+    set(CMAKE_INSTALL_RPATH "@loader_path")
+endif ()
 
 if (NOT MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -41,34 +41,60 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "core/*.cpp")
 add_library(r-type_network_core SHARED ${SRC_R_TYPE_NETWORK_CORE})
 target_include_directories(r-type_network_core PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/core/include
 )
 
-target_include_directories(r-type_network_core PUBLIC
+file(GLOB_RECURSE SRC_R_TYPE_NETWORK "api/*.cpp")
+add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK})
+target_include_directories(r-type_network PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/utils
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/core/include
 )
 
 if (MSVC)
     file(GLOB_RECURSE SRC_R_TYPE_NETWORK_IOCP "iocp/*.cpp")
     add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_IOCP})
     target_include_directories(r-type_network_platform PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/utils
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/include
             ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
     )
     target_link_libraries(r-type_network_platform PUBLIC r-type_network_core ws2_32)
+
+    target_include_directories(r-type_network_core PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
+    )
+
+    target_include_directories(r-type_network PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
+    )
+
 else ()
     file(GLOB_RECURSE SRC_R_TYPE_NETWORK_POSIX "posix/*.cpp")
     add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_POSIX})
     target_include_directories(r-type_network_platform PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/utils
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/core/include
             ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
     )
     target_link_libraries(r-type_network_platform PUBLIC r-type_network_core)
     set_target_properties(r-type_network_core r-type_network_platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
     find_package(Threads REQUIRED)
     target_link_libraries(r-type_network_platform PUBLIC r-type_network_core Threads::Threads)
-endif ()
 
-file(GLOB_RECURSE SRC_R_TYPE_NETWORK "api/*.cpp")
-add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK})
+    target_include_directories(r-type_network_core PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
+    )
+
+    target_include_directories(r-type_network PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
+    )
+endif ()
 
 target_compile_definitions(r-type_network PRIVATE R_TYPE_NETWORK_BUILD=1)
 target_compile_definitions(r-type_network_core PRIVATE R_TYPE_NETWORK_BUILD=1)

@@ -74,7 +74,7 @@ AllowShortEnumsOnASingleLine: true
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
-AllowShortLoopsOnASingleLine: true
+AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AttributeMacros:
@@ -116,7 +116,7 @@ BreakFunctionDefinitionParameters: false
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: false
 BreakTemplateDeclarations: Yes
-ColumnLimit: 170
+ColumnLimit: 140
 CommentPragmas: "^ IWYU pragma:"
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
@@ -193,7 +193,7 @@ PackConstructorInitializers: BinPack
 PenaltyBreakAssignment: 2
 PenaltyBreakBeforeFirstCallParameter: 19
 PenaltyBreakComment: 300
-PenaltyBreakFirstLessLess: 120
+PenaltyBreakFirstLessLess: 140
 PenaltyBreakOpenParenthesis: 0
 PenaltyBreakScopeResolution: 500
 PenaltyBreakString: 1000
