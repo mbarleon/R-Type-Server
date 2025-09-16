@@ -1,4 +1,9 @@
-#include "POSIXClock.hpp"
+#if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
+    #include "../include/POSIXClock.hpp"
+#else
+    #include "POSIXClock.hpp"
+#endif
+
 #include <memory>
 
 namespace rtype::network {

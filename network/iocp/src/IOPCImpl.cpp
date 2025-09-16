@@ -1,4 +1,9 @@
-#include "IOCPClock.hpp"
+#if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
+    #include "../include/IOCPClock.hpp"
+#else
+    #include "IOCPClock.hpp"
+#endif
+
 #include <memory>
 
 namespace rtype::network {

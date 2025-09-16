@@ -1,4 +1,8 @@
-#include "IOCPVersion.hpp"
+#if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
+    #include "../include/IOCPVersion.hpp"
+#else
+    #include "IOCPVersion.hpp"
+#endif
 
 R_TYPE_NETWORK_API const char *rtype::network::rtype_network_platform_name()
 {
