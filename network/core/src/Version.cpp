@@ -1,6 +1,6 @@
 #include "CoreVersion.hpp"
 
-const char *rtype_network_core_version(void)
+const char *rtype_network_core_version()
 {
-    return R_TYPE_NERWORK_CORE_VERSION;
+    return R_TYPE_NETWORK_CORE_VERSION;
 }

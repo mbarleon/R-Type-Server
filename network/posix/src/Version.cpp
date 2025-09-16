@@ -1,11 +1,11 @@
 #include "POSIXVersion.hpp"
 
-const char *rtype_network_platform_name(void)
+const char *rtype_network_platform_name()
 {
     return "POSIX";
 }
 
-const char *rtype_network_platform_version(void)
+const char *rtype_network_platform_version()
 {
-    return R_TYPE_NERWORK_POSIX_VERSION;
+    return R_TYPE_NETWORK_POSIX_VERSION;
 }
