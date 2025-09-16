@@ -1,11 +1,11 @@
 #include "IOCPVersion.hpp"
 
-const char *rtype_network_platform_name()
+R_TYPE_NETWORK_API const char *rtype::network::rtype_network_platform_name()
 {
     return "IOCP";
 }
 
-const char *rtype_network_platform_version()
+R_TYPE_NETWORK_API const char *rtype::network::rtype_network_platform_version()
 {
     return R_TYPE_NETWORK_IOCP_VERSION;
 }

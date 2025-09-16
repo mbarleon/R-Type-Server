@@ -20,7 +20,7 @@ jobs:
       matrix:
         os: ${{ fromJSON(vars.ENABLE_MACOS == 'true'
           && '["ubuntu-latest","windows-latest","macos-latest"]'
-          || '["ubuntu-latest","windows-latest"]') }} 
+          || '["ubuntu-latest","windows-latest"]') }}
 
     steps:
       - name: Checkout repository
@@ -85,6 +85,25 @@ jobs:
             exit 84
           fi
 
+      - name: Check required libraries on Linux
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        env:
+          REQUIRED_LIBS: ${{ vars.REQUIRED_LIBS }}
+        run: |
+          for lib in $REQUIRED_LIBS; do
+            found=0
+            for ext in so a; do
+              if [ -f "lib${lib}.${ext}" ]; then
+                echo "::notice file=lib${lib}.${ext}::Found $lib (${ext})"
+                found=1
+              fi
+            done
+            if [ $found -eq 0 ]; then
+              echo "::error file=lib${lib}::Missing $lib"
+              exit 84
+            fi
+          done
+
       # ---------- MACOS ----------
       - name: Ensure cmake & ninja (macOS)
         if: ${{ matrix.os == 'macos-latest' }}
@@ -135,6 +154,25 @@ jobs:
             ls -la
             exit 84
           fi
+
+      - name: Check required libraries on macOS
+        if: ${{ matrix.os == 'macos-latest' }}
+        env:
+          REQUIRED_LIBS: ${{ vars.REQUIRED_LIBS }}
+        run: |
+          for lib in $REQUIRED_LIBS; do
+            found=0
+            for ext in dylib a; do
+              if [ -f "lib${lib}.${ext}" ]; then
+                echo "::notice file=lib${lib}.${ext}::Found $lib (${ext})"
+                found=1
+              fi
+            done
+            if [ $found -eq 0 ]; then
+              echo "::error file=lib${lib}::Missing $lib"
+              exit 84
+            fi
+          done
 
       # ---------- WINDOWS ----------
       - name: Ensure cmake & ninja (Windows)
@@ -192,3 +230,24 @@ jobs:
           Get-ChildItem -Recurse -File | Select-Object -First 200 | Format-Table FullName,Length,LastWriteTime
           exit 84
 
+      - name: Check required libraries on Windows
+        if: ${{ matrix.os == 'windows-latest' }}
+        shell: pwsh
+        env:
+          REQUIRED_LIBS: ${{ vars.REQUIRED_LIBS }}
+        run: |
+          $libs = $env:REQUIRED_LIBS -split ' '
+          $extensions = @('dll', 'lib')
+          foreach ($lib in $libs) {
+            $found = $false
+            foreach ($ext in $extensions) {
+              if (Test-Path "$lib.$ext") {
+                Write-Host "::notice file=$lib.$ext::Found $lib ($ext)"
+                $found = $true
+              }
+            }
+            if (-not $found) {
+              Write-Host "::error file=$lib::Missing $lib"
+              exit 84
+            }
+          }
