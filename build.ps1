@@ -111,8 +111,7 @@ function Invoke-FClean() {
     Invoke-Clean
     $paths = @(
         "r-type_ecs",
-        "libr-type_ecs.so","libr-type_ecs.dylib",
-        "r-type_ecs.dll","r-type_ecs.lib","r-type_ecs.a","r-type_ecs.exp",
+        "*.so","*.dylib", "*.dll","*.lib","*.a","*.exp",
         "r-type_server","r-type_server.exe","unit_tests","plugins","code_coverage.txt",
         "unit_tests-*.profraw","unit_tests.profdata","vgcore*","cmake-build-debug"
     )

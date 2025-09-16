@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(r-type_server LANGUAGES CXX VERSION 0.0.1)
+project(r-type_network LANGUAGES CXX VERSION 0.0.1)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -7,6 +7,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 if (NOT MSVC)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -21,24 +23,34 @@ endif()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-file(GLOB_RECURSE SRC_R_TYPE_SERVER "core/src/*.cpp")
-
-add_executable(r-type_server ${SRC_R_TYPE_SERVER})
-target_include_directories(r-type_server PRIVATE
-  ${CMAKE_SOURCE_DIR}/include
+file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "core/*.cpp")
+add_library(r-type_network_core STATIC ${SRC_R_TYPE_NETWORK_CORE})
+target_include_directories(r-type_network_core PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/core/include
 )
 
-add_subdirectory(ecs)
-target_include_directories(r-type_server PRIVATE ${CMAKE_SOURCE_DIR}/ecs/include)
-target_link_libraries(r-type_server PRIVATE r-type_ecs)
-
-add_subdirectory(network)
-target_include_directories(r-type_server PRIVATE ${CMAKE_SOURCE_DIR}/network/include)
-target_link_libraries(r-type_server PRIVATE r-type_network)
-
-if(APPLE OR UNIX)
-  set_target_properties(r-type_server PROPERTIES BUILD_RPATH "${CMAKE_SOURCE_DIR}")
+if (MSVC)
+  file(GLOB_RECURSE SRC_R_TYPE_NETWORK_IOCP "iocp/*.cpp")
+  add_library(r-type_network_platform STATIC ${SRC_R_TYPE_NETWORK_IOCP})
+  target_include_directories(r-type_network_platform PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
+  )
+  target_link_libraries(r-type_network_platform PUBLIC r-type_network_core)
+else()
+  file(GLOB_RECURSE SRC_R_TYPE_NETWORK_POSIX "posix/*.cpp")
+  add_library(r-type_network_platform STATIC ${SRC_R_TYPE_NETWORK_POSIX})
+  target_include_directories(r-type_network_platform PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
+  )
+  target_link_libraries(r-type_network_platform PUBLIC r-type_network_core)
 endif()
+
+file(GLOB_RECURSE SRC_R_TYPE_NETWORK "api/*.cpp")
+add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK})
+target_include_directories(r-type_network PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+target_compile_definitions(r-type_network PRIVATE R_TYPE_NETWORK_BUILD=1)
+target_link_libraries(r-type_network PUBLIC r-type_network_platform)
 
 function(enable_strict_warnings tgt)
   if (MSVC)
@@ -75,9 +87,9 @@ function(enable_strict_warnings tgt)
   endif()
 endfunction()
 
-enable_strict_warnings(r-type_server)
+enable_strict_warnings(r-type_network)
 
 option(ENABLE_DEBUG "Enable debug macros and flags" OFF)
 if(ENABLE_DEBUG)
-  target_compile_definitions(r-type_server PRIVATE r-type_server_DEBUG=1)
+  target_compile_definitions(r-type_network PRIVATE r-type_network_DEBUG=1)
 endif()

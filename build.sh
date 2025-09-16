@@ -120,8 +120,7 @@ function _fclean()
 {
     _clean
     rm -rf r-type_ecs \
-        libr-type_ecs.so libr-type_ecs.dylib \
-        r-type_ecs.dll r-type_ecs.lib r-type_ecs.exp r-type_ecs.a \
+        *.so *.dylib *.dll *.lib *.exp *.a \
         r-type_server r-type_server.exe unit_tests plugins code_coverage.txt unit_tests-*.profraw unit_tests.profdata vgcore* cmake-build-debug
 }
 
