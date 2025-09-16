@@ -237,17 +237,18 @@ jobs:
           REQUIRED_LIBS: ${{ vars.REQUIRED_LIBS }}
         run: |
           $libs = $env:REQUIRED_LIBS -split ' '
-          $extensions = @('dll', 'lib')
+          $extensions = @('dll', 'lib', 'exp')
           foreach ($lib in $libs) {
             $found = $false
             foreach ($ext in $extensions) {
-              if (Test-Path "$lib.$ext") {
-                Write-Host "::notice file=$lib.$ext::Found $lib ($ext)"
+              if (Test-Path "lib$lib.$ext") {
+                Write-Host "::notice file=lib$lib.$ext::Found $lib ($ext)"
                 $found = $true
               }
             }
             if (-not $found) {
               Write-Host "::error file=$lib::Missing $lib"
+              Get-ChildItem -Recurse -File | Select-Object -First 200 | Format-Table FullName,Length,LastWriteTime
               exit 84
             }
           }
