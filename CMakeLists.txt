@@ -34,7 +34,7 @@ target_link_libraries(r-type_server PRIVATE r-type_ecs)
 
 add_subdirectory(network)
 target_include_directories(r-type_server PRIVATE ${CMAKE_SOURCE_DIR}/network/include)
-target_link_libraries(r-type_server PRIVATE r-type_network)
+target_link_libraries(r-type_server PRIVATE r-type_network r-type_network_platform r-type_network_core)
 
 if(APPLE OR UNIX)
   set_target_properties(r-type_server PROPERTIES BUILD_RPATH "${CMAKE_SOURCE_DIR}")
