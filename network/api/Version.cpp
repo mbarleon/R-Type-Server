@@ -1,5 +1,4 @@
 #include "RTypeNetworkVersion.hpp"
-#include "RTypePlatfomSpecificDefines.hpp"
 #include <sstream>
 
 #include "CoreVersion.hpp"
@@ -11,13 +10,20 @@
     #error "Unsupported platform"
 #endif
 
-R_TYPE_NETWORK_API char *rtype_full_network_version()
+template<typename... Params>
+static std::string concat_infos(Params &&...params)
 {
     std::ostringstream oss;
 
-    oss << "R-Type network ver. " << R_TYPE_NETWORK_API_VERSION << "\n"
-        << rtype_network_platform_name() << " implementation ver. " << rtype_network_platform_version() << "\nCore ver. " << R_TYPE_NETWORK_CORE_VERSION;
-    return RTYPE_AGNOSTIC_STRDUP_IMPL(oss.str().c_str());
+    (oss << ... << params);
+    return oss.str();
+}
+
+R_TYPE_NETWORK_API const char *rtype_full_network_version()
+{
+    thread_local std::string infos = concat_infos("R-Type network ver. ", R_TYPE_NETWORK_API_VERSION, "\n", rtype_network_platform_name(), " implementation ver. ",
+        rtype_network_platform_version(), "\nCore ver. ", R_TYPE_NETWORK_CORE_VERSION);
+    return infos.c_str();
 }
 
 R_TYPE_NETWORK_API const char *rtype_network_version()
