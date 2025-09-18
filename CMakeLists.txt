@@ -42,7 +42,7 @@ add_executable(r-type_server ${SRC_R_TYPE_SERVER})
 target_include_directories(r-type_server PRIVATE
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/ecs/include
-        ${CMAKE_SOURCE_DIR}/network/include
+        ${CMAKE_SOURCE_DIR}/network/api/include
 )
 
 add_subdirectory(ecs)
@@ -90,5 +90,5 @@ enable_strict_warnings(r-type_server)
 
 option(ENABLE_DEBUG "Enable debug macros and flags" OFF)
 if (ENABLE_DEBUG)
-    target_compile_definitions(r-type_server PRIVATE r-type_server_DEBUG=1)
+    target_compile_definitions(r-type_server PRIVATE DEBUG=1)
 endif ()

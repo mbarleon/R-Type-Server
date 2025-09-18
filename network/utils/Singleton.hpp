@@ -5,7 +5,7 @@
 namespace rtype::network::utils {
 
 template<class C>
-class R_TYPE_NETWORK_HIDE_FROM_ABI Singleton : public NonCopyable
+class RTYPE_NET_HIDE_FROM_ABI Singleton : public NonCopyable
 {
     public:
         C &getInstance()

@@ -4,7 +4,7 @@
 
 namespace rtype::network::utils {
 
-class R_TYPE_NETWORK_HIDE_FROM_ABI NonCopyable
+class RTYPE_NET_HIDE_FROM_ABI NonCopyable
 {
     public:
         NonCopyable(const NonCopyable &other) = delete;

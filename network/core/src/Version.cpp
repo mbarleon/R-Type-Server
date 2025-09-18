@@ -1,6 +1,11 @@
 #include "CoreVersion.hpp"
 
-R_TYPE_NETWORK_API const char *rtype::network::rtype_network_core_version()
+RTYPE_NET_API const char *rtype::network::core::version() noexcept
 {
-    return R_TYPE_NETWORK_CORE_VERSION;
+    return RTYPE_NET_CORE_VER;
+}
+
+RTYPE_NET_API std::string rtype::network::core::full_version() noexcept
+{
+    return std::string("Core Ver. " RTYPE_NET_CORE_VER);
 }

@@ -38,67 +38,85 @@ endif ()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "core/*.cpp")
+file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "core/src/*.cpp")
 add_library(r-type_network_core SHARED ${SRC_R_TYPE_NETWORK_CORE})
 target_include_directories(r-type_network_core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/utils
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/api/include
         ${CMAKE_CURRENT_SOURCE_DIR}/core/include
 )
 
-file(GLOB_RECURSE SRC_R_TYPE_NETWORK "api/*.cpp")
+file(GLOB_RECURSE SRC_R_TYPE_NETWORK "api/src/*.cpp")
 add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK})
 target_include_directories(r-type_network PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/utils
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/core/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/api/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
 )
 
 if (MSVC)
-    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_IOCP "iocp/*.cpp")
-    add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_IOCP})
+    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_WINDOWS "platform/windows/src/*.cpp")
+    add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_WINDOWS})
     target_include_directories(r-type_network_platform PUBLIC
             ${CMAKE_CURRENT_SOURCE_DIR}/utils
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/api/include
             ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/platform/windows/include
     )
     target_link_libraries(r-type_network_platform PUBLIC r-type_network_core ws2_32)
 
-    target_include_directories(r-type_network_core PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
-    )
-
-    target_include_directories(r-type_network PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/iocp/include
-    )
-
 else ()
-    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_POSIX "posix/*.cpp")
-    add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_POSIX})
-    target_include_directories(r-type_network_platform PUBLIC
+    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_POSIX "subplatform/posix/src/*.cpp")
+    add_library(r-type_network_subplatform SHARED ${SRC_R_TYPE_NETWORK_POSIX})
+    target_include_directories(r-type_network_subplatform PUBLIC
             ${CMAKE_CURRENT_SOURCE_DIR}/utils
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/api/include
             ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/posix/include
     )
-    target_link_libraries(r-type_network_platform PUBLIC r-type_network_core)
-    set_target_properties(r-type_network_core r-type_network_platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
     find_package(Threads REQUIRED)
-    target_link_libraries(r-type_network_platform PUBLIC r-type_network_core Threads::Threads)
+    target_link_libraries(r-type_network_subplatform PUBLIC r-type_network_core Threads::Threads)
 
-    target_include_directories(r-type_network_core PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
-    )
+    if (APPLE)
+        file(GLOB_RECURSE SRC_R_TYPE_NETWORK_MACOS "platform/macos/src/*.cpp")
+        add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_MACOS})
+        target_include_directories(r-type_network_platform PUBLIC
+                ${CMAKE_CURRENT_SOURCE_DIR}/utils
+                ${CMAKE_CURRENT_SOURCE_DIR}/api/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/core/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/platform/macos/include
+        )
+        target_link_libraries(r-type_network_platform PUBLIC r-type_network_subplatform r-type_network_core)
 
-    target_include_directories(r-type_network PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/posix/include
-    )
+    else ()
+        file(GLOB_RECURSE SRC_R_TYPE_NETWORK_LINUX "platform/linux/src/*.cpp")
+        add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_LINUX})
+        target_include_directories(r-type_network_platform PUBLIC
+                ${CMAKE_CURRENT_SOURCE_DIR}/utils
+                ${CMAKE_CURRENT_SOURCE_DIR}/api/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/core/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/include
+                ${CMAKE_CURRENT_SOURCE_DIR}/platform/linux/include
+        )
+        target_link_libraries(r-type_network_platform PUBLIC r-type_network_subplatform r-type_network_core)
+
+    endif ()
+
+    set_target_properties(r-type_network_core r-type_network_subplatform r-type_network_platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif ()
 
 target_compile_definitions(r-type_network PRIVATE R_TYPE_NETWORK_BUILD=1)
 target_compile_definitions(r-type_network_core PRIVATE R_TYPE_NETWORK_BUILD=1)
 target_compile_definitions(r-type_network_platform PRIVATE R_TYPE_NETWORK_BUILD=1)
+
+if (NOT MSVC)
+    target_compile_definitions(r-type_network_subplatform PRIVATE R_TYPE_NETWORK_BUILD=1)
+endif ()
 
 target_link_libraries(r-type_network PUBLIC r-type_network_platform)
 
@@ -137,11 +155,21 @@ function(enable_strict_warnings tgt)
     endif ()
 endfunction()
 
+enable_strict_warnings(r-type_network)
 enable_strict_warnings(r-type_network_core)
 enable_strict_warnings(r-type_network_platform)
-enable_strict_warnings(r-type_network)
+
+if (NOT MSVC)
+    enable_strict_warnings(r-type_network_subplatform)
+endif ()
 
 option(ENABLE_DEBUG "Enable debug macros and flags" OFF)
 if (ENABLE_DEBUG)
-    target_compile_definitions(r-type_network PRIVATE r-type_network_DEBUG=1)
+    target_compile_definitions(r-type_network PRIVATE DEBUG=1)
+    target_compile_definitions(r-type_network_core PRIVATE DEBUG=1)
+    target_compile_definitions(r-type_network_platform PRIVATE DEBUG=1)
+    if (NOT MSVC)
+        target_compile_definitions(r-type_network_subplatform PRIVATE DEBUG=1)
+    endif ()
+
 endif ()

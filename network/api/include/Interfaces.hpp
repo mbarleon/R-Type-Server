@@ -7,13 +7,13 @@
 
 namespace rtype::network {
 
-struct R_TYPE_NETWORK_API Endpoint {
+struct RTYPE_NET_API Endpoint {
         std::array<std::uint8_t, 16> ip{};
         std::uint16_t port{};
         bool operator==(const Endpoint &other) const noexcept = default;
 };
 
-struct R_TYPE_NETWORK_API RecvSpan {
+struct RTYPE_NET_API RecvSpan {
         std::uint8_t *buf{};
         std::uint32_t len{};
         Endpoint from{};
@@ -28,7 +28,7 @@ struct R_TYPE_NETWORK_API RecvSpan {
         }
 };
 
-struct R_TYPE_NETWORK_API SendSpan {
+struct RTYPE_NET_API SendSpan {
         const std::uint8_t *buf{};
         std::uint32_t len{};
         Endpoint to{};
@@ -43,7 +43,7 @@ struct R_TYPE_NETWORK_API SendSpan {
         }
 };
 
-struct R_TYPE_NETWORK_API PacketHeader {
+struct RTYPE_NET_API PacketHeader {
         std::uint32_t matchId;
         std::uint16_t clientId;
         std::uint16_t seq;
