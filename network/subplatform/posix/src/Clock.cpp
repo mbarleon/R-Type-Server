@@ -1,7 +1,7 @@
 #if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
     #include "../../include/SubplatformClock.hpp"
 #else
-    #include "SubplatformClock.hpp"
+    #include <SubplatformClock.hpp>
 #endif
 
 #include <chrono>

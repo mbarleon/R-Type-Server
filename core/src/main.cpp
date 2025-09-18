@@ -1,4 +1,4 @@
-#include "CoreVersion.hpp"
+#include <CoreVersion.hpp>
 
 #include <NetworkVersion.hpp>
 #include <RTypeEcsVersion.hpp>

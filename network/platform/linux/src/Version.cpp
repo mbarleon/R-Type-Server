@@ -1,11 +1,11 @@
 #if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
     #include "../include/LinuxVersion.hpp"
 #else
-    #include "LinuxVersion.hpp"
+    #include <LinuxVersion.hpp>
 #endif
 
-#include "PlatformVersion.hpp"
-#include "SubplatformVersion.hpp"
+#include <PlatformVersion.hpp>
+#include <SubplatformVersion.hpp>
 #include <string>
 
 RTYPE_NET_API const char *rtype::network::platform::name() noexcept

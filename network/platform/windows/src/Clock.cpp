@@ -1,7 +1,7 @@
 #if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
     #include "../../../api/include/Clock.hpp"
 #else
-    #include "Clock.hpp"
+    #include <Clock.hpp>
 #endif
 
 #if defined(_WIN32)

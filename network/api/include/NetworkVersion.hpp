@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NetworkApi.hpp"
+#include <NetworkApi.hpp>
 #include <string>
 
 #define RTYPE_NET_NAME "R-Type Network"

@@ -1,5 +1,5 @@
-#include "NetworkVersion.hpp"
-#include "PlatformVersion.hpp"
+#include <NetworkVersion.hpp>
+#include <PlatformVersion.hpp>
 #include <string>
 
 RTYPE_NET_API const char *rtype::network::version() noexcept

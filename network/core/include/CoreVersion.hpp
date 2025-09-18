@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NetworkApi.hpp"
+#include <NetworkApi.hpp>
 #include <string>
 
 #define RTYPE_NET_CORE_VER "0.0.1"

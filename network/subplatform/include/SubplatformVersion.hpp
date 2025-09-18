@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NetworkApi.hpp"
+#include <NetworkApi.hpp>
 #include <string>
 
 namespace rtype::network::subplatform {

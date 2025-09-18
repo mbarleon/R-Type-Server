@@ -1,4 +1,4 @@
-#include "CoreVersion.hpp"
+#include <CoreVersion.hpp>
 
 RTYPE_NET_API const char *rtype::network::core::version() noexcept
 {

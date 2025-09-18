@@ -1,6 +1,6 @@
 #pragma once
 
-#include "NonCopyable.hpp"
+#include <NonCopyable.hpp>
 
 namespace rtype::network::utils {
 

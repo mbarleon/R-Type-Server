@@ -1,11 +1,11 @@
 #if defined(__INTELLISENSE__) || defined(__JETBRAINS_IDE__)
     #include "../include/POSIXVersion.hpp"
 #else
-    #include "POSIXVersion.hpp"
+    #include <POSIXVersion.hpp>
 #endif
 
-#include "CoreVersion.hpp"
-#include "SubplatformVersion.hpp"
+#include <CoreVersion.hpp>
+#include <SubplatformVersion.hpp>
 #include <string>
 
 RTYPE_NET_API const char *rtype::network::subplatform::name() noexcept
