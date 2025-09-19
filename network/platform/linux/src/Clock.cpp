@@ -5,8 +5,6 @@
 #endif
 
 #include <SubplatformClock.hpp>
+#include <SubplatformForwardFunction.hpp>
 
-RTYPE_NET_API std::uint64_t rtype::network::now_ns() noexcept
-{
-    return subplatform::now_ns();
-}
+RTYPE_NET_FWD_FUNC(now_ns, noexcept)
