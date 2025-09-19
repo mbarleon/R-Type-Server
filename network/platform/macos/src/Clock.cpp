@@ -7,4 +7,4 @@
 #include <SubplatformClock.hpp>
 #include <SubplatformForwardFunction.hpp>
 
-RTYPE_NET_FWD_FUNC(now_ns, noexcept)
+RTYPE_NET_FWD_FUNC(RTYPE_NET_API, now_ns, (), (),)
