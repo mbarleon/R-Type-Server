@@ -7,7 +7,7 @@
         #define RTYPE_NET_API __declspec(dllimport)
     #endif
 #else
-    #define RTYPE_NET_API
+    #define RTYPE_NET_API __attribute__((visibility("default")))
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
