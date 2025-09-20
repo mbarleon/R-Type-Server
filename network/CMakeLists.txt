@@ -47,9 +47,6 @@ target_include_directories(r-type_network_core PUBLIC
 if (MSVC)
     file(GLOB_RECURSE SRC_R_TYPE_NETWORK_WINDOWS "src/Platform/Windows/*.cpp")
     add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK_WINDOWS})
-    target_include_directories(r-type_network PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-    )
     target_link_libraries(r-type_network PUBLIC r-type_network_core ws2_32)
 
 else ()
@@ -58,29 +55,23 @@ else ()
     target_include_directories(r-type_network_subplatform PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
-    find_package(Threads REQUIRED)
-    target_link_libraries(r-type_network_subplatform PUBLIC r-type_network_core Threads::Threads)
+    target_link_libraries(r-type_network_subplatform PUBLIC r-type_network_core)
 
     if (APPLE)
         file(GLOB_RECURSE SRC_R_TYPE_NETWORK_MACOS "src/Platform/MacOS/*.cpp")
         add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK_MACOS})
-        target_include_directories(r-type_network PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
-        )
-        target_link_libraries(r-type_network PUBLIC r-type_network_subplatform r-type_network_core)
-
     else ()
         file(GLOB_RECURSE SRC_R_TYPE_NETWORK_LINUX "src/Platform/Linux/*.cpp")
         add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK_LINUX})
-        target_include_directories(r-type_network PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/include
-        )
-        target_link_libraries(r-type_network PUBLIC r-type_network_subplatform r-type_network_core)
-
     endif ()
 
+    target_link_libraries(r-type_network PUBLIC r-type_network_subplatform r-type_network_core)
     set_target_properties(r-type_network_core r-type_network_subplatform r-type_network PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif ()
+
+target_include_directories(r-type_network PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
 
 target_compile_definitions(r-type_network PRIVATE R_TYPE_NETWORK_BUILD=1)
 target_compile_definitions(r-type_network_core PRIVATE R_TYPE_NETWORK_BUILD=1)
