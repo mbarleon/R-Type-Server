@@ -1,12 +1,14 @@
 #pragma once
 
+#include <utility>
+
 // clang-format off
-#define RTYPE_NET_FWD_FUNC(API, PREFIX, NAME, PARAMS, CALL_ARGS, SUFFIX)                \
-namespace rtype::network {                                                              \
-    API PREFIX inline auto NAME PARAMS noexcept(noexcept(subplatform::NAME CALL_ARGS))  \
-        -> decltype(subplatform::NAME CALL_ARGS) SUFFIX                                 \
-    {                                                                                   \
-        return subplatform::NAME CALL_ARGS;                                             \
-    }                                                                                   \
+#define RTYPE_NET_FWD_FUNC(API, PREFIX, NAME, QUALS, SUFFIX)                                \
+namespace rtype::network {                                                                  \
+    API PREFIX inline decltype(auto) NAME(auto&&... args) QUALS                             \
+        noexcept(noexcept(subplatform::NAME(std::forward<decltype(args)>(args)...))) SUFFIX \
+    {                                                                                       \
+        return subplatform::NAME(std::forward<decltype(args)>(args)...);                    \
+    }                                                                                       \
 }
 // clang-format on
