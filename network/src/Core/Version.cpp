@@ -7,5 +7,5 @@ RTYPE_NET_API const char *rtype::network::core::version() noexcept
 
 RTYPE_NET_API std::string rtype::network::core::full_version() noexcept
 {
-    return std::string("Core Ver. " RTYPE_NET_CORE_VER);
+    return {"Core Ver. " RTYPE_NET_CORE_VER};
 }
