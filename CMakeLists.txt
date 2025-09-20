@@ -42,14 +42,14 @@ add_executable(r-type_server ${SRC_R_TYPE_SERVER})
 target_include_directories(r-type_server PRIVATE
         ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/ecs/include
-        ${CMAKE_SOURCE_DIR}/network/api/include
+        ${CMAKE_SOURCE_DIR}/network/include
 )
 
 add_subdirectory(ecs)
 target_link_libraries(r-type_server PRIVATE r-type_ecs)
 
 add_subdirectory(network)
-target_link_libraries(r-type_server PRIVATE r-type_network r-type_network_platform r-type_network_core)
+target_link_libraries(r-type_server PRIVATE r-type_network)
 
 function(enable_strict_warnings tgt)
     if (MSVC)

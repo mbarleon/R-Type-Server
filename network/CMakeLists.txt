@@ -38,87 +38,56 @@ endif ()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "core/src/*.cpp")
+file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "src/Core/*.cpp")
 add_library(r-type_network_core SHARED ${SRC_R_TYPE_NETWORK_CORE})
 target_include_directories(r-type_network_core PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils
-        ${CMAKE_CURRENT_SOURCE_DIR}/api/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-)
-
-file(GLOB_RECURSE SRC_R_TYPE_NETWORK "api/src/*.cpp")
-add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK})
-target_include_directories(r-type_network PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils
-        ${CMAKE_CURRENT_SOURCE_DIR}/api/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 if (MSVC)
-    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_WINDOWS "platform/windows/src/*.cpp")
-    add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_WINDOWS})
-    target_include_directories(r-type_network_platform PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/utils
-            ${CMAKE_CURRENT_SOURCE_DIR}/api/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/platform/windows/include
+    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_WINDOWS "src/Platform/Windows/*.cpp")
+    add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK_WINDOWS})
+    target_include_directories(r-type_network PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
-    target_link_libraries(r-type_network_platform PUBLIC r-type_network_core ws2_32)
+    target_link_libraries(r-type_network PUBLIC r-type_network_core ws2_32)
 
 else ()
-    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_POSIX "subplatform/posix/src/*.cpp")
+    file(GLOB_RECURSE SRC_R_TYPE_NETWORK_POSIX "src/Subplatform/POSIX/*.cpp")
     add_library(r-type_network_subplatform SHARED ${SRC_R_TYPE_NETWORK_POSIX})
     target_include_directories(r-type_network_subplatform PUBLIC
-            ${CMAKE_CURRENT_SOURCE_DIR}/utils
-            ${CMAKE_CURRENT_SOURCE_DIR}/api/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/include
-            ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/posix/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
     find_package(Threads REQUIRED)
     target_link_libraries(r-type_network_subplatform PUBLIC r-type_network_core Threads::Threads)
 
     if (APPLE)
-        file(GLOB_RECURSE SRC_R_TYPE_NETWORK_MACOS "platform/macos/src/*.cpp")
-        add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_MACOS})
-        target_include_directories(r-type_network_platform PUBLIC
-                ${CMAKE_CURRENT_SOURCE_DIR}/utils
-                ${CMAKE_CURRENT_SOURCE_DIR}/api/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/platform/macos/include
+        file(GLOB_RECURSE SRC_R_TYPE_NETWORK_MACOS "src/Platform/MacOS/*.cpp")
+        add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK_MACOS})
+        target_include_directories(r-type_network PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
-        target_link_libraries(r-type_network_platform PUBLIC r-type_network_subplatform r-type_network_core)
+        target_link_libraries(r-type_network PUBLIC r-type_network_subplatform r-type_network_core)
 
     else ()
-        file(GLOB_RECURSE SRC_R_TYPE_NETWORK_LINUX "platform/linux/src/*.cpp")
-        add_library(r-type_network_platform SHARED ${SRC_R_TYPE_NETWORK_LINUX})
-        target_include_directories(r-type_network_platform PUBLIC
-                ${CMAKE_CURRENT_SOURCE_DIR}/utils
-                ${CMAKE_CURRENT_SOURCE_DIR}/api/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/core/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/platform/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/subplatform/include
-                ${CMAKE_CURRENT_SOURCE_DIR}/platform/linux/include
+        file(GLOB_RECURSE SRC_R_TYPE_NETWORK_LINUX "src/Platform/Linux/*.cpp")
+        add_library(r-type_network SHARED ${SRC_R_TYPE_NETWORK_LINUX})
+        target_include_directories(r-type_network PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
         )
-        target_link_libraries(r-type_network_platform PUBLIC r-type_network_subplatform r-type_network_core)
+        target_link_libraries(r-type_network PUBLIC r-type_network_subplatform r-type_network_core)
 
     endif ()
 
-    set_target_properties(r-type_network_core r-type_network_subplatform r-type_network_platform PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    set_target_properties(r-type_network_core r-type_network_subplatform r-type_network PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif ()
 
 target_compile_definitions(r-type_network PRIVATE R_TYPE_NETWORK_BUILD=1)
 target_compile_definitions(r-type_network_core PRIVATE R_TYPE_NETWORK_BUILD=1)
-target_compile_definitions(r-type_network_platform PRIVATE R_TYPE_NETWORK_BUILD=1)
 
 if (NOT MSVC)
     target_compile_definitions(r-type_network_subplatform PRIVATE R_TYPE_NETWORK_BUILD=1)
 endif ()
-
-target_link_libraries(r-type_network PUBLIC r-type_network_platform)
 
 function(enable_strict_warnings tgt)
     if (MSVC)
@@ -157,7 +126,6 @@ endfunction()
 
 enable_strict_warnings(r-type_network)
 enable_strict_warnings(r-type_network_core)
-enable_strict_warnings(r-type_network_platform)
 
 if (NOT MSVC)
     enable_strict_warnings(r-type_network_subplatform)
@@ -167,7 +135,6 @@ option(ENABLE_DEBUG "Enable debug macros and flags" OFF)
 if (ENABLE_DEBUG)
     target_compile_definitions(r-type_network PRIVATE DEBUG=1)
     target_compile_definitions(r-type_network_core PRIVATE DEBUG=1)
-    target_compile_definitions(r-type_network_platform PRIVATE DEBUG=1)
     if (NOT MSVC)
         target_compile_definitions(r-type_network_subplatform PRIVATE DEBUG=1)
     endif ()

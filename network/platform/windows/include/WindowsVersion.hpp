@@ -1,4 +1,0 @@
-#pragma once
-
-#define RTYPE_NET_PLATFORM_NAME_WIN "WINDOWS"
-#define RTYPE_NET_PLATFORM_VER_WIN "0.0.1"

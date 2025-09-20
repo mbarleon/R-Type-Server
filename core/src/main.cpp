@@ -1,7 +1,5 @@
-#include <CoreVersion.hpp>
-
-#include <NetworkVersion.hpp>
 #include <RTypeEcsVersion.hpp>
+#include <RTypeNet/Version.hpp>
 #include <iostream>
 
 int main()
