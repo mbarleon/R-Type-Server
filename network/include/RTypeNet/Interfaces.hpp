@@ -5,7 +5,34 @@
 #include <cstdint>
 #include <span>
 
+#if defined(_WIN32)
+    #include <winsock2.h>
+#else
+    #include <poll.h>
+#endif
+
 namespace rtype::network {
+
+#if defined(_WIN32)
+typedef SOCKET Handle;
+typedef unsigned long NFDS;
+typedef int BufLen
+#else
+typedef int Handle;
+typedef nfds_t NFDS;
+typedef size_t BufLen
+#endif
+
+enum class Protocol : uint8_t {
+        UDP,
+        TCP
+}
+
+struct RTYPE_NET_API PollFD {
+        Handle handle;
+        short events;
+        short revents;
+};
 
 struct RTYPE_NET_API Endpoint {
         std::array<std::uint8_t, 16> ip{};
@@ -13,46 +40,11 @@ struct RTYPE_NET_API Endpoint {
         bool operator==(const Endpoint &other) const noexcept = default;
 };
 
-struct RTYPE_NET_API RecvSpan {
-        std::uint8_t *buf{};
-        std::uint32_t len{};
-        Endpoint from{};
-
-        template<std::size_t n>
-        constexpr explicit RecvSpan(std::uint8_t (&_buf)[n]) noexcept : buf(_buf), len(n)
-        {
-        }
-
-        constexpr explicit RecvSpan(std::uint8_t *_buf, const std::uint32_t _len) noexcept : buf(_buf), len(_len)
-        {
-        }
+struct RTYPE_NET_API Socket {
+        Endpoint endpoint{};
+        Handle handle{};
+        Protocol protocol{};
+        bool operator==(const Socket &other) const noexcept = default;
 };
-
-struct RTYPE_NET_API SendSpan {
-        const std::uint8_t *buf{};
-        std::uint32_t len{};
-        Endpoint to{};
-
-        template<std::size_t n>
-        constexpr explicit SendSpan(const std::uint8_t (&_buf)[n]) noexcept : buf(_buf), len(n)
-        {
-        }
-
-        constexpr explicit SendSpan(const std::uint8_t *_buf, const std::uint32_t _len) noexcept : buf(_buf), len(_len)
-        {
-        }
-};
-
-struct RTYPE_NET_API PacketHeader {
-        std::uint32_t matchId;
-        std::uint16_t clientId;
-        std::uint16_t seq;
-        std::uint8_t chan;
-        std::uint8_t flags;
-}
-#if defined(__GNUC__)
-__attribute__((packed))
-#endif
-;
 
 }// namespace rtype::network
