@@ -16,17 +16,17 @@ namespace rtype::network {
 #if defined(_WIN32)
 typedef SOCKET Handle;
 typedef unsigned long NFDS;
-typedef int BufLen
+typedef int BufLen;
 #else
 typedef int Handle;
 typedef nfds_t NFDS;
-typedef size_t BufLen
+typedef size_t BufLen;
 #endif
 
 enum class Protocol : uint8_t {
         UDP,
         TCP
-}
+};
 
 struct RTYPE_NET_API PollFD {
         Handle handle;

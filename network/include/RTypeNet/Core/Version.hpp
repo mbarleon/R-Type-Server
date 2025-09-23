@@ -7,7 +7,7 @@
 
 namespace rtype::network::core {
 
-RTYPE_NET_API const char *version() noexcept;
-RTYPE_NET_API std::string full_version() noexcept;
+[[nodiscard]] RTYPE_NET_API const char *version() noexcept;
+[[nodiscard]] RTYPE_NET_API std::string full_version() noexcept;
 
 }// namespace rtype::network::core
