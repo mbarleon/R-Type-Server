@@ -92,3 +92,21 @@ option(ENABLE_DEBUG "Enable debug macros and flags" OFF)
 if (ENABLE_DEBUG)
     target_compile_definitions(r-type_server PRIVATE DEBUG=1)
 endif ()
+
+if (MSVC)
+    set(_rm_script "${CMAKE_CURRENT_BINARY_DIR}/rm_msvc_extras.cmake")
+    file(WRITE "${_rm_script}" [=[
+        if(DEFINED dir)
+            file(GLOB _files "${dir}/*.lib" "${dir}/*.exp")
+            if(_files)
+                file(REMOVE ${_files})
+            endif()
+        endif()
+    ]=])
+    add_custom_command(TARGET r-type_server POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -Ddir="$<TARGET_FILE_DIR:r-type_server>"
+            -P "${_rm_script}"
+        COMMENT "Removing MSVC import library and export files"
+    )
+endif()
