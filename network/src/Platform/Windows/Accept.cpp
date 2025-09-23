@@ -3,7 +3,7 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-rtype::network::Socket rtype::network::accept(Handle serverHandle)
+RTYPE_NET_API rtype::network::Socket rtype::network::accept(Handle serverHandle)
 {
     sockaddr_storage clientAddr{};
     int clientAddrLen = sizeof(clientAddr);

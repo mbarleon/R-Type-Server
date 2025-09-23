@@ -2,7 +2,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-void rtype::network::subplatform::disconnect(Socket &sock) noexcept
+RTYPE_NET_API void rtype::network::subplatform::disconnect(Socket &sock) noexcept
 {
     if (sock.handle != INVALID_SOCK) {
         ::shutdown(sock.handle, SHUT_RDWR);

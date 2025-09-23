@@ -1,7 +1,7 @@
 #include <RTypeNet/Disconnect.hpp>
 #include <winsock2.h>
 
-void rtype::network::disconnect(Socket &sock) noexcept
+RTYPE_NET_API void rtype::network::disconnect(Socket &sock) noexcept
 {
     if (sock.handle != INVALID_SOCK) {
         ::shutdown(sock.handle, SD_BOTH);
