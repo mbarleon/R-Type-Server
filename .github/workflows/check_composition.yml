@@ -175,6 +175,10 @@ jobs:
           done
 
       # ---------- WINDOWS ----------
+      - name: Set up MSVC environment
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: ilammy/msvc-dev-cmd@v1
+
       - name: Ensure cmake & ninja (Windows)
         if: ${{ matrix.os == 'windows-latest' }}
         shell: pwsh
@@ -237,11 +241,11 @@ jobs:
           REQUIRED_LIBS: ${{ vars.REQUIRED_LIBS }}
         run: |
           $libs = $env:REQUIRED_LIBS -split ' '
-          $extensions = @('dll', 'lib', 'exp')
+          $extensions = @('dll')
           foreach ($lib in $libs) {
             $found = $false
             foreach ($ext in $extensions) {
-              if (Test-Path "lib$lib.$ext") {
+              if (Test-Path "$lib.$ext") {
                 Write-Host "::notice file=lib$lib.$ext::Found $lib ($ext)"
                 $found = $true
               }
