@@ -1,10 +1,10 @@
 #pragma once
 
-#include <RTypeNet/Api.hpp>
+#include <RTypeSrv/Api.hpp>
 
-namespace rtype::network::utils {
+namespace rtype::srv::utils {
 
-class RTYPE_NET_HIDE_FROM_ABI NonCopyable
+class RTYPE_SRV_API NonCopyable
 {
     public:
         NonCopyable(const NonCopyable &other) = delete;

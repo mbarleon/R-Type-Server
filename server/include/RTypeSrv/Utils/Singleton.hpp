@@ -1,14 +1,14 @@
 #pragma once
 
-#include <RTypeNet/Utils/NonCopyable.hpp>
+#include <RTypeSrv/Utils/NonCopyable.hpp>
 
-namespace rtype::network::utils {
+namespace rtype::srv::utils {
 
 template<class C>
-class RTYPE_NET_HIDE_FROM_ABI Singleton : public NonCopyable
+class RTYPE_SRV_API Singleton : public NonCopyable
 {
     public:
-        C &getInstance()
+        static C &getInstance()
         {
             static C instance;
             return instance;
@@ -19,4 +19,4 @@ class RTYPE_NET_HIDE_FROM_ABI Singleton : public NonCopyable
         ~Singleton() noexcept = default;
 };
 
-}// namespace rtype::network::utils
+}// namespace rtype::srv::utils

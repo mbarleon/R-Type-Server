@@ -40,7 +40,7 @@ file(GLOB_RECURSE SRC_R_TYPE_SERVER "core/src/*.cpp")
 
 add_executable(r-type_server ${SRC_R_TYPE_SERVER})
 target_include_directories(r-type_server PRIVATE
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/core/include
         ${CMAKE_SOURCE_DIR}/ecs/include
         ${CMAKE_SOURCE_DIR}/server/include
         ${CMAKE_SOURCE_DIR}/network/include
@@ -108,9 +108,9 @@ if (MSVC)
         endif()
     ]=])
     add_custom_command(TARGET r-type_server POST_BUILD
-        COMMAND ${CMAKE_COMMAND}
+            COMMAND ${CMAKE_COMMAND}
             -Ddir="$<TARGET_FILE_DIR:r-type_server>"
             -P "${_rm_script}"
-        COMMENT "Removing MSVC import library and export files"
+            COMMENT "Removing MSVC import library and export files"
     )
-endif()
+endif ()

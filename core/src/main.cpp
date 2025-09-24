@@ -1,12 +1,27 @@
-#include <RTypeEcsVersion.hpp>
-#include <RTypeNet/Version.hpp>
-#include <RTypeSrv/Version.hpp>
+#include "ParseArgs.hpp"
+#include "SetSigHandlers.hpp"
+#include "StartServer.hpp"
 #include <iostream>
 
-int main()
+static void printHelp() noexcept
 {
-    std::cout << "ECS ver. " << rtype_ecs_version() << std::endl;
-    std::cout << rtype::network::full_version() << std::endl;
-    std::cout << rtype::srv::full_version() << std::endl;
+    std::cout << "Usage: ./r-type_server -h host -p port -j n_cores" << std::endl;
+}
+
+int main(const int ac, const char *av[]) noexcept
+{
+    rtype::network::Endpoint endpoint;
+    std::size_t n_cores;
+
+    if (ac < 2) {
+        printHelp();
+        return 84;
+    }
+    if (const int ret = rtype::srv::parseArgs(ac, av, endpoint, n_cores); ret != 0) {
+        printHelp();
+        return ret == 84 ? 84 : 0;
+    }
+    rtype::srv::setSigHandlers();
+    rtype::srv::startServer(endpoint, n_cores);
     return 0;
 }

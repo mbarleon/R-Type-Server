@@ -41,12 +41,11 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 file(GLOB_RECURSE SRC_R_TYPE_NETWORK_CORE "src/*.cpp")
 add_library(r-type_srv SHARED ${SRC_R_TYPE_NETWORK_CORE})
 target_include_directories(r-type_srv PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../network/include
 )
 
-target_include_directories(r-type_srv PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+target_link_libraries(r-type_srv PUBLIC r-type_network)
 
 target_compile_definitions(r-type_srv PRIVATE R_TYPE_SRV_BUILD=1)
 
