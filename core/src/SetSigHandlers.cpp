@@ -36,7 +36,7 @@ void rtype::srv::handle_signals(int sig, [[maybe_unused]] siginfo_t *info, [[may
 
 void rtype::srv::setSigHandlers() noexcept
 {
-#ifdef _WIN32
+#if defined(_WIN32)
     std::signal(SIGINT, handle_signals);
     std::signal(SIGTERM, handle_signals);
 #else
