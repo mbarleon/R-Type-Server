@@ -9,4 +9,6 @@ namespace rtype::network {
 
 [[nodiscard]] RTYPE_NET_API ssize_t send(Handle handle, const void *buffer, BufLen length, int flags) noexcept;
 
-}
+[[nodiscard]] RTYPE_NET_API ssize_t sendto(Handle handle, const void *buffer, BufLen length, int flags, const Endpoint &to) noexcept;
+
+}// namespace rtype::network
