@@ -5,7 +5,7 @@
 #include <RTypeNet/Interfaces.hpp>
 #include <RTypeNet/ssize_t.hpp>
 
-namespace rtype::network {
+namespace rtype::network::subplatform {
 
 [[nodiscard]] RTYPE_NET_API ssize_t send(Handle handle, const void *buffer, BufLen length, int flags) noexcept;
 
