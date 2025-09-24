@@ -4,7 +4,7 @@
 #include <RTypeNet/Interfaces.hpp>
 #include <limits>
 
-namespace rtype::network {
+namespace rtype::network::subplatform {
 
 constexpr auto NFDS_MAX = (std::numeric_limits<NFDS>::max)();
 constexpr auto NFDS_MIN = (std::numeric_limits<NFDS>::min)();
