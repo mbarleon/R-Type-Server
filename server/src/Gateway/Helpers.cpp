@@ -8,7 +8,8 @@
 void rtype::srv::Gateway::_disconnectByHandle(const network::Handle &handle) noexcept
 {
     if (const auto it = std::ranges::find_if(_sockets, [handle](const auto &pair) { return pair.second.handle == handle; });
-    it != _sockets.end()) {
+        it != _sockets.end()) {
+        std::cout << "Disconnecting client at " << utils::ipToStr(it->second.endpoint.ip) << ":" << it->second.endpoint.port << std::endl;
         disconnect(it->second);
         _sockets.erase(it);
     }
@@ -25,7 +26,7 @@ void rtype::srv::Gateway::_acceptClients() noexcept
 {
     try {
         const network::Socket client_sock = network::accept(_sock.handle);
-        _fds.push_back({client_sock.handle, POLLIN, 0});
+        _fds.push_back({client_sock.handle, POLLIN | POLLOUT, 0});
         _sockets[_next_id] = client_sock;
         ++_nfds;
         ++_next_id;
