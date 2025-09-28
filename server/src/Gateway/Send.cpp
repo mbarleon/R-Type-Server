@@ -67,8 +67,8 @@ void rtype::srv::Gateway::_sendPackets(const network::NFDS i)
 
 void rtype::srv::Gateway::sendOccupancyRequests()
 {
-    for (const auto &[ip, port] : _gs_registry) {
-        if (auto it = _gs_addr_to_handle.find({ip, port}); it != _gs_addr_to_handle.end()) {
+    for (const auto &[gs_key, _] : _gs_registry) {
+        if (auto it = _gs_addr_to_handle.find(gs_key); it != _gs_addr_to_handle.end()) {
             network::Handle gs_handle = it->second;
             std::vector<uint8_t> occ_req = {22};
             _send_spans[gs_handle].push_back(std::move(occ_req));

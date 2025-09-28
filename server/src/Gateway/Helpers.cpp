@@ -15,6 +15,14 @@ void rtype::srv::Gateway::_disconnectByHandle(const network::Handle &handle) noe
     }
     _recv_spans.erase(handle);
     _send_spans.erase(handle);
+    for (auto it = _gs_addr_to_handle.begin(); it != _gs_addr_to_handle.end();) {
+        if (it->second == handle) {
+            _gs_registry.erase(it->first);
+            it = _gs_addr_to_handle.erase(it);
+        } else {
+            ++it;
+        }
+    }
     if (const auto it = std::ranges::find_if(_fds.begin(), _fds.end(), [handle](const auto &elem) { return elem.handle == handle; });
         it != _fds.end()) {
         _fds.erase(it);

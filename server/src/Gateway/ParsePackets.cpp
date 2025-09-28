@@ -13,9 +13,10 @@ void rtype::srv::Gateway::handleGSRegistration(network::Handle handle, const uin
     std::array<uint8_t, 16> ip{};
     std::memcpy(ip.data(), data + offset + 1, 16);
     uint16_t port = static_cast<uint16_t>((data[offset + 17] << 8) | data[offset + 18]);
-    const bool already_registered = _gs_registry.count(ip) > 0;
-    _gs_registry[ip] = port;
-    _gs_addr_to_handle[{ip, port}] = handle;
+    std::pair<std::array<uint8_t, 16>, uint16_t> key = {ip, port};
+    const bool already_registered = _gs_registry.count(key) > 0;
+    _gs_registry[key] = 1;
+    _gs_addr_to_handle[key] = handle;
     uint8_t response = already_registered ? 0 : 1;
     _send_spans[handle].push_back({response});
     offset += 1 + 16 + 2;
@@ -37,9 +38,9 @@ void rtype::srv::Gateway::handleCreate(network::Handle handle, const uint8_t *da
     size_t min_occupancy = SIZE_MAX;
     for (auto it = _gs_registry.begin(); it != _gs_registry.end(); ++it) {
         size_t occ = 0;
-        for (const auto &[fst, snd] : _game_to_gs) {
-            if (snd.first == it->first) {
-                auto occ_it = _occupancy_cache.find(fst);
+        for (const auto &[game_id, gs_key] : _game_to_gs) {
+            if (gs_key == it->first) {
+                auto occ_it = _occupancy_cache.find(game_id);
                 occ += (occ_it != _occupancy_cache.end()) ? occ_it->second : 0;
             }
         }
@@ -53,9 +54,9 @@ void rtype::srv::Gateway::handleCreate(network::Handle handle, const uint8_t *da
         offset += 2;
         return;
     }
-    auto &[fst, snd] = *min_gs;
+    auto &[gs_key, _] = *min_gs;
     network::Handle gs_handle = 0;
-    if (const auto it_handle = _gs_addr_to_handle.find({fst, snd}); it_handle != _gs_addr_to_handle.end()) {
+    if (const auto it_handle = _gs_addr_to_handle.find(gs_key); it_handle != _gs_addr_to_handle.end()) {
         gs_handle = it_handle->second;
     }
     if (gs_handle == 0) {
@@ -77,7 +78,9 @@ void rtype::srv::Gateway::handleJoin(const network::Handle handle, const uint8_t
 
     const uint32_t id =
         static_cast<uint32_t>((data[offset + 1] << 24) | (data[offset + 2] << 16) | (data[offset + 3] << 8) | data[offset + 4]);
-    if (const auto it = _pending_creates.find(handle); it != _pending_creates.end()) {
+    if (_gs_registry.empty()) {
+        _send_spans[handle].push_back({0});
+    } else if (const auto it = _pending_creates.find(handle); it != _pending_creates.end()) {
         const network::Handle client_handle = it->second.first;
         std::vector join_msg(data + offset, data + offset + 1 + 16 + 2 + 4);
         _send_spans[client_handle].push_back(std::move(join_msg));

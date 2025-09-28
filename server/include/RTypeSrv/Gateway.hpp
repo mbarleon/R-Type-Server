@@ -79,11 +79,11 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         using FdsType = std::vector<network::PollFD>;
         using OccupancyCacheType = std::unordered_map<uint32_t, uint8_t>;
         using SocketsMapType = std::unordered_map<std::size_t, network::Socket>;
-        using GsRegistryType = std::unordered_map<std::array<uint8_t, 16>, uint16_t>;
         using RecvSpanType = std::unordered_map<network::Handle, std::vector<uint8_t>>;
         using SendSpanType = std::unordered_map<network::Handle, std::vector<std::vector<uint8_t>>>;
         using GameToGsType = std::unordered_map<uint32_t, std::pair<std::array<uint8_t, 16>, uint16_t>>;
         using PendingCreatesType = std::unordered_map<network::Handle, std::pair<network::Handle, uint8_t>>;
+        using GsRegistryType = std::unordered_map<std::pair<std::array<uint8_t, 16>, uint16_t>, int, pair_hash>;
         using GsAddrToHandleType = std::unordered_map<std::pair<std::array<uint8_t, 16>, uint16_t>, network::Handle, pair_hash>;
 
         void _serverLoop();
