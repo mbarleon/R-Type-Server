@@ -2,3 +2,6 @@
 	path = ecs
 	url = https://github.com/mbarleon/R-Type-ECS.git
 	branch = main
+[submodule "network"]
+	path = network
+	url = git@github.com:mbarleon/R-Type-Network.git
