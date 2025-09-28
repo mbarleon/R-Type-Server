@@ -1,12 +1,12 @@
 #include "StartServer.hpp"
 #include <RTypeSrv/Exception.hpp>
-#include <RTypeSrv/Server.hpp>
+#include <RTypeSrv/Gateway.hpp>
 #include <iostream>
 
 std::thread rtype::srv::startTcpServer(const network::Endpoint &endpoint, std::atomic<bool> &quitServer) noexcept
 {
     return std::thread([endpoint, &quitServer]() {
-        Server &s = Server::getInstance();
+        Gateway &s = Gateway::getInstance();
 
         try {
             s.initServer(endpoint, quitServer);
