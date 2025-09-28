@@ -1,6 +1,9 @@
 #pragma once
-#include <cstddef>
+#include <atomic>
 #include <csignal>
+#include <cstddef>
+
+extern std::atomic<bool> quitServer;
 
 namespace rtype::srv {
 
@@ -10,7 +13,7 @@ void handle_signals(int sig);
 void handle_signals(int sig, [[maybe_unused]] siginfo_t *info, [[maybe_unused]] void *ucontext);
 #endif
 
-static constexpr int zap_srv_max_sig_count = 3;
+static constexpr int max_sig_count = 3;
 
 void setSigHandlers() noexcept;
 

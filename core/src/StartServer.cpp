@@ -3,20 +3,26 @@
 #include <RTypeSrv/Server.hpp>
 #include <iostream>
 
-void rtype::srv::startServer(const network::Endpoint &endpoint, const std::size_t n_cores) noexcept
+std::thread rtype::srv::startTcpServer(const network::Endpoint &endpoint, std::atomic<bool> &quitServer) noexcept
 {
-    Server &s = Server::getInstance();
+    return std::thread([endpoint, &quitServer]() {
+        Server &s = Server::getInstance();
 
-    try {
-        s.initServer(endpoint, n_cores);
-        s.startServer();
-    } catch (const Exception &e) {
         try {
-            s.stopServer();
-        } catch (const Exception &e2) {
-            std::cerr << "Exception caught while stopping server after exception in startServer(): " << e2.where() << ": " << e2.what()
-                      << std::endl;
+            s.initServer(endpoint, quitServer);
+            s.startServer();
+        } catch (const Exception &e) {
+            std::cerr << "Exception caught while running server: " << e.where() << ": " << e.what() << std::endl;
         }
-        std::cerr << "Exception caught while running server: " << e.where() << ": " << e.what() << std::endl;
-    }
+    });
+}
+
+std::thread rtype::srv::startUdpServer(const network::Endpoint &baseEndpoint, std::size_t ncores, const network::Endpoint &tcpEndpoint,
+    std::atomic<bool> &quitServer) noexcept
+{
+    (void) baseEndpoint;
+    (void) ncores;
+    (void) tcpEndpoint;
+    (void) quitServer;
+    return std::thread();
 }
