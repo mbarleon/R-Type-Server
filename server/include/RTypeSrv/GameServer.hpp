@@ -1,6 +1,12 @@
 #pragma once
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable : 4251)
+#endif
+
 #include <RTypeNet/Interfaces.hpp>
+#include <RTypeSrv/Api.hpp>
 #include <RTypeSrv/Utils/NonCopyable.hpp>
 #include <atomic>
 #include <cstddef>
@@ -9,7 +15,7 @@
 
 namespace rtype::srv {
 
-class GameServer : public utils::NonCopyable
+class RTYPE_SRV_API GameServer : public utils::NonCopyable
 {
     public:
         GameServer(const network::Endpoint &baseEndpoint, std::size_t ncores, const network::Endpoint &tcpEndpoint,
@@ -45,3 +51,7 @@ class GameServer : public utils::NonCopyable
 };
 
 }// namespace rtype::srv
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
