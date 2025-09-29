@@ -1,19 +1,20 @@
 #include <RTypeSrv/Exception.hpp>
 #include <RTypeSrv/Gateway.hpp>
+#include <RTypeSrv/Utils/Logger.hpp>
 #include <iostream>
 
 #if defined(_WIN32)
 template class RTYPE_SRV_API rtype::srv::utils::Singleton<rtype::srv::Gateway>;
 #endif
 
-void rtype::srv::Gateway::startServer()
+void rtype::srv::Gateway::startServer() noexcept
 {
     try {
         _startServer();
         _serverLoop();
         _cleanupServer();
     } catch (const std::exception &e) {
-        std::cerr << "Caught exception in server: " << e.what() << std::endl;
+        utils::cerr("Caught exception in server: ", e.what());
     }
 }
 

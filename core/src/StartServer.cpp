@@ -1,5 +1,6 @@
 #include "StartServer.hpp"
 #include <RTypeSrv/Exception.hpp>
+#include <RTypeSrv/GameServer.hpp>
 #include <RTypeSrv/Gateway.hpp>
 #include <iostream>
 
@@ -17,12 +18,21 @@ std::thread rtype::srv::startTcpServer(const network::Endpoint &endpoint, std::a
     });
 }
 
-std::thread rtype::srv::startUdpServer(const network::Endpoint &baseEndpoint, std::size_t ncores, const network::Endpoint &tcpEndpoint,
-    std::atomic<bool> &quitServer) noexcept
+std::vector<std::thread> rtype::srv::startUdpServers(network::Endpoint baseEndpoint, std::size_t ncores,
+    const network::Endpoint &tcpEndpoint, std::atomic<bool> &quitServer) noexcept
 {
-    (void) baseEndpoint;
-    (void) ncores;
-    (void) tcpEndpoint;
-    (void) quitServer;
-    return std::thread();
+    std::vector<std::thread> threads{};
+
+    threads.reserve(ncores);
+    for (std::size_t i = 0; i < ncores; ++i) {
+        threads.emplace_back([baseEndpoint, ncores, tcpEndpoint, &quitServer]() {
+            try {
+                GameServer(baseEndpoint, ncores, tcpEndpoint, quitServer).StartServer();
+            } catch (const Exception &e) {
+                std::cerr << "Exception caught while running server: " << e.where() << ": " << e.what() << std::endl;
+            }
+        });
+        ++baseEndpoint.port;
+    }
+    return threads;
 }

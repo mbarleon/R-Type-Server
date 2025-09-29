@@ -1,6 +1,7 @@
 #include <RTypeNet/Send.hpp>
 #include <RTypeSrv/Gateway.hpp>
 #include <deque>
+#include <ranges>
 #include <utility>
 
 namespace {
@@ -57,7 +58,7 @@ void rtype::srv::Gateway::_sendPackets(const network::NFDS i)
     if (!(_fds[i].revents & POLLOUT)) {
         return;
     }
-    auto it = _send_spans.find(handle);
+    const auto it = _send_spans.find(handle);
     if (it == _send_spans.end()) {
         return;
     }
@@ -73,7 +74,7 @@ void rtype::srv::Gateway::_sendPackets(const network::NFDS i)
 
 void rtype::srv::Gateway::sendOccupancyRequests()
 {
-    for (const auto &[gs_key, _] : _gs_registry) {
+    for (const auto &gs_key : _gs_registry | std::views::keys) {
         if (auto it = _gs_addr_to_handle.find(gs_key); it != _gs_addr_to_handle.end()) {
             network::Handle gs_handle = it->second;
             std::vector<uint8_t> occ_req = {21};

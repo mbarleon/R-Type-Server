@@ -2,6 +2,7 @@
 #include "SetSigHandlers.hpp"
 #include "StartServer.hpp"
 #include <atomic>
+#include <chrono>
 #include <cstring>
 #include <filesystem>
 #include <iostream>
@@ -45,9 +46,14 @@ static void makeAllThreads(const rtype::srv::Config &cfg)
     threads.reserve((cfg.tcp_only ? 0 : cfg.n_cores) + (cfg.udp_only ? 0 : 1));
     if (!cfg.udp_only) {
         threads.emplace_back(rtype::srv::startTcpServer(cfg.tcp_endpoint, quitServer));
+        if (!cfg.tcp_only) {
+            std::this_thread::sleep_for(std::chrono::nanoseconds(static_cast<std::size_t>(1e9)));
+        }
     }
     if (!cfg.tcp_only) {
-        threads.emplace_back(rtype::srv::startUdpServer(cfg.udp_endpoint, cfg.n_cores, cfg.tcp_endpoint, quitServer));
+        for (auto &thread : rtype::srv::startUdpServers(cfg.udp_endpoint, cfg.n_cores, cfg.tcp_endpoint, quitServer)) {
+            threads.emplace_back(std::move(thread));
+        }
     }
     for (auto &t : threads) {
         if (t.joinable()) {

@@ -2,6 +2,7 @@
 #include <atomic>
 #include <csignal>
 #include <cstddef>
+#include <mutex>
 
 extern std::atomic<bool> quitServer;
 

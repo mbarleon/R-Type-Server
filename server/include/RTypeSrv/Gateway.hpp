@@ -63,7 +63,7 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         friend class Singleton;
 
     public:
-        void startServer();
+        void startServer() noexcept;
         void initServer(const network::Endpoint &tcp_endpoint, std::atomic<bool> &quit_server);
 
     protected:

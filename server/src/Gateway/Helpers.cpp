@@ -2,6 +2,7 @@
 #include <RTypeNet/Disconnect.hpp>
 #include <RTypeSrv/Gateway.hpp>
 #include <RTypeSrv/Utils/IPToStr.hpp>
+#include <RTypeSrv/Utils/Logger.hpp>
 #include <iostream>
 #include <ranges>
 
@@ -9,7 +10,7 @@ void rtype::srv::Gateway::_disconnectByHandle(const network::Handle &handle) noe
 {
     if (const auto it = std::ranges::find_if(_sockets, [handle](const auto &pair) { return pair.second.handle == handle; });
         it != _sockets.end()) {
-        std::cout << "Disconnecting client at " << utils::ipToStr(it->second.endpoint.ip) << ":" << it->second.endpoint.port << std::endl;
+        utils::cout("Disconnecting client at ", utils::ipToStr(it->second.endpoint.ip), ":", it->second.endpoint.port);
         disconnect(it->second);
         _sockets.erase(it);
     }
@@ -38,8 +39,8 @@ void rtype::srv::Gateway::_acceptClients() noexcept
         _sockets[_next_id] = client_sock;
         ++_nfds;
         ++_next_id;
-        std::cout << "New client connected: " << utils::ipToStr(client_sock.endpoint.ip) << ":" << client_sock.endpoint.port << std::endl;
+        utils::cout("New client connected: ", utils::ipToStr(client_sock.endpoint.ip), ":", client_sock.endpoint.port);
     } catch (const std::exception &e) {
-        std::cerr << "Error accepting new connection: " << e.what() << std::endl;
+        utils::cerr("Error accepting new connection: ", e.what());
     }
 }

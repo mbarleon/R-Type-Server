@@ -7,6 +7,7 @@
 #include <RTypeSrv/Exception.hpp>
 #include <RTypeSrv/Gateway.hpp>
 #include <RTypeSrv/Utils/IPToStr.hpp>
+#include <RTypeSrv/Utils/Logger.hpp>
 #include <iostream>
 #include <ranges>
 
@@ -27,7 +28,7 @@ void rtype::srv::Gateway::_startServer()
             e.what());
     }
     _fds.push_back({_sock.handle, POLLIN, 0});
-    std::cout << "TCP server listening on " << utils::ipToStr(_tcp_endpoint.ip) << ":" << _tcp_endpoint.port << "..." << std::endl;
+    utils::cout("TCP server listening on ", utils::ipToStr(_tcp_endpoint.ip), ":", _tcp_endpoint.port, "...");
 }
 
 void rtype::srv::Gateway::_handleClients(network::NFDS &i) noexcept
@@ -36,7 +37,7 @@ void rtype::srv::Gateway::_handleClients(network::NFDS &i) noexcept
         _recvPackets(i);
         _parsePackets();
     } catch (const std::exception &e) {
-        std::cerr << "Error handling client socket: " << e.what() << std::endl;
+        utils::cerr("Error handling client socket: ", e.what());
         _disconnectByHandle(_fds[i].handle);
         --i;
     }
@@ -47,7 +48,7 @@ void rtype::srv::Gateway::_handleClientsSend(network::NFDS &i) noexcept
     try {
         _sendPackets(i);
     } catch (const std::exception &e) {
-        std::cerr << "Error handling client socket: " << e.what() << std::endl;
+        utils::cerr("Error handling client socket: ", e.what());
         _disconnectByHandle(_fds[i].handle);
         --i;
     }
@@ -77,7 +78,7 @@ void rtype::srv::Gateway::_serverLoop()
 
     while (!(*_quit_server)) {
         if (network::poll(_fds.data(), _nfds, 0) == -1) {
-            std::cerr << "Poll error, stopping server..." << std::endl;
+            utils::cerr("Poll error, stopping server...");
             break;
         }
         for (network::NFDS i = 0; i < _nfds; ++i) {
@@ -103,6 +104,6 @@ void rtype::srv::Gateway::_cleanupServer()
     _next_id = 0;
     disconnect(_sock);
     _is_running = false;
-    std::cout << "TCP server stopped." << std::endl;
+    utils::cout("TCP server stopped.");
     network::cleanup();
 }
