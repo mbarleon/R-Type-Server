@@ -43,10 +43,12 @@ class RTYPE_SRV_API GameServer : public utils::NonCopyable
         RecvSpanType _recv_spans;
         std::size_t _next_id = 0;
         bool _is_running = false;
-        network::Handle _tcpHandle{};
+        network::Socket _tcp_sock{};
+        network::Handle _tcp_handle{};
         network::Socket _server_sock{};
         network::Endpoint _tcp_endpoint{};
         network::Endpoint _base_endpoint{};
+        network::Endpoint _my_tcp_endpoint{};
         std::atomic<bool> *_quit_server = nullptr;
 };
 

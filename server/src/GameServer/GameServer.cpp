@@ -1,4 +1,5 @@
 #include <RTypeNet/Cleanup.hpp>
+#include <RTypeNet/Connect.hpp>
 #include <RTypeNet/Disconnect.hpp>
 #include <RTypeNet/Listen.hpp>
 #include <RTypeNet/Startup.hpp>
@@ -29,8 +30,9 @@ void rtype::srv::GameServer::_initServer()
     }
     _fds.push_back({_sock.handle, POLLIN, 0});
     _is_running = true;
-    _tcpHandle = 0;
+    _my_tcp_endpoint.ip = _base_endpoint.ip;
     utils::cout("Game server listening on ", utils::ipToStr(_base_endpoint.ip), ":", _base_endpoint.port, "...");
+    _tcp_handle = network::connect(_my_tcp_endpoint, _tcp_endpoint, network::Protocol::TCP);
 }
 
 void rtype::srv::GameServer::_serverLoop()
