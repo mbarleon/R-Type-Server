@@ -35,6 +35,16 @@ void rtype::srv::Gateway::_handleClients(network::NFDS &i) noexcept
     try {
         _recvPackets(i);
         _parsePackets();
+    } catch (const std::exception &e) {
+        std::cerr << "Error handling client socket: " << e.what() << std::endl;
+        _disconnectByHandle(_fds[i].handle);
+        --i;
+    }
+}
+
+void rtype::srv::Gateway::_handleClientsSend(network::NFDS &i) noexcept
+{
+    try {
         _sendPackets(i);
     } catch (const std::exception &e) {
         std::cerr << "Error handling client socket: " << e.what() << std::endl;
@@ -56,6 +66,8 @@ void rtype::srv::Gateway::_handleLoop(network::NFDS &i) noexcept
         } else {
             _handleClients(i);
         }
+    } else if (_fds[i].revents & POLLOUT && _fds[i].handle != _sock.handle) {
+        _handleClientsSend(i);
     }
 }
 

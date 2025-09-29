@@ -57,12 +57,18 @@ void rtype::srv::Gateway::_sendPackets(const network::NFDS i)
     if (!(_fds[i].revents & POLLOUT)) {
         return;
     }
-    if (const auto it = _send_spans.find(handle); it != _send_spans.end()) {
-        auto &bufs = it->second;
-        auto sendQueue = prepareSendQueue(bufs);
-        processSendQueue(handle, sendQueue);
-        updateSendBuffers(sendQueue, bufs);
+    auto it = _send_spans.find(handle);
+    if (it == _send_spans.end()) {
+        return;
     }
+    auto &bufs = it->second;
+    if (bufs.empty()) {
+        _fds[i].events &= ~POLLOUT;
+        return;
+    }
+    auto sendQueue = prepareSendQueue(bufs);
+    processSendQueue(handle, sendQueue);
+    updateSendBuffers(sendQueue, bufs);
 }
 
 void rtype::srv::Gateway::sendOccupancyRequests()
@@ -70,7 +76,7 @@ void rtype::srv::Gateway::sendOccupancyRequests()
     for (const auto &[gs_key, _] : _gs_registry) {
         if (auto it = _gs_addr_to_handle.find(gs_key); it != _gs_addr_to_handle.end()) {
             network::Handle gs_handle = it->second;
-            std::vector<uint8_t> occ_req = {22};
+            std::vector<uint8_t> occ_req = {21};
             _send_spans[gs_handle].push_back(std::move(occ_req));
         }
     }

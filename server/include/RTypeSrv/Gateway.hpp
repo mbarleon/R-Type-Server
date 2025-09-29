@@ -76,15 +76,17 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         static constexpr auto OCCUPANCY_INTERVAL = std::chrono::seconds(60);
 
         using clock = std::chrono::steady_clock;
+        using IP = std::pair<std::array<uint8_t, 16>, uint16_t>;
+
         using FdsType = std::vector<network::PollFD>;
-        using OccupancyCacheType = std::unordered_map<uint32_t, uint8_t>;
+        using GameToGsType = std::unordered_map<uint32_t, IP>;
+        using GsRegistryType = std::unordered_map<IP, int, pair_hash>;
+        using OccupancyCacheType = std::unordered_map<IP, uint8_t, pair_hash>;
         using SocketsMapType = std::unordered_map<std::size_t, network::Socket>;
+        using GsAddrToHandleType = std::unordered_map<IP, network::Handle, pair_hash>;
         using RecvSpanType = std::unordered_map<network::Handle, std::vector<uint8_t>>;
         using SendSpanType = std::unordered_map<network::Handle, std::vector<std::vector<uint8_t>>>;
-        using GameToGsType = std::unordered_map<uint32_t, std::pair<std::array<uint8_t, 16>, uint16_t>>;
         using PendingCreatesType = std::unordered_map<network::Handle, std::pair<network::Handle, uint8_t>>;
-        using GsRegistryType = std::unordered_map<std::pair<std::array<uint8_t, 16>, uint16_t>, int, pair_hash>;
-        using GsAddrToHandleType = std::unordered_map<std::pair<std::array<uint8_t, 16>, uint16_t>, network::Handle, pair_hash>;
 
         void _serverLoop();
         void _startServer();
@@ -97,8 +99,10 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         void _sendPackets(network::NFDS i);
         void _handleLoop(network::NFDS &i) noexcept;
         void _handleClients(network::NFDS &i) noexcept;
+        void _handleClientsSend(network::NFDS &i) noexcept;
         void _disconnectByHandle(const network::Handle &handle) noexcept;
 
+        void setPolloutForHandle(network::Handle h) noexcept;
         void handleJoin(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         void handleCreate(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         void handleOccupancy(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
