@@ -103,11 +103,24 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         void _disconnectByHandle(const network::Handle &handle) noexcept;
 
         void setPolloutForHandle(network::Handle h) noexcept;
+        void handleGID(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         void handleJoin(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         void handleCreate(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         void handleOccupancy(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         static void handleOKKO(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
         void handleGSRegistration(network::Handle handle, const uint8_t *data, size_t &offset, size_t bufsize);
+
+        void sendErrorResponse(network::Handle handle);
+        static uint32_t extractGameId(const uint8_t *data) noexcept;
+        static std::vector<uint8_t> buildCreateMsg(uint8_t gametype);
+        std::optional<GsRegistryType::iterator> findLeastOccupiedGS();
+        [[nodiscard]] network::Handle getGSHandle(const IP &gs_key) const;
+        static std::pair<IP, uint8_t> parseOccupancy(const uint8_t *data, std::size_t offset);
+        [[nodiscard]] std::optional<IP> findGSKeyByHandle(network::Handle handle) const noexcept;
+        static std::vector<uint8_t> buildJoinMsgForClient(const uint8_t *data, std::size_t offset);
+        static std::vector<uint32_t> parseGIDs(const uint8_t *data, std::size_t start, std::size_t bufsize);
+        static std::pair<std::array<uint8_t, 16>, uint16_t> parseGSKey(const uint8_t *data, std::size_t offset);
+        [[nodiscard]] static std::vector<uint8_t> buildJoinMsgForGS(const std::array<uint8_t, 16> &ip, uint16_t port, uint32_t id);
 
         FdsType _fds;
         bool _is_init = false;
