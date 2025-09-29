@@ -3,7 +3,6 @@
 #include <cstring>
 #include <ranges>
 #include <stdexcept>
-#include <poll.h>
 
 void rtype::srv::Gateway::setPolloutForHandle(network::Handle h) noexcept
 {
@@ -106,12 +105,12 @@ void rtype::srv::Gateway::handleJoin(const network::Handle handle, const uint8_t
         std::vector<uint8_t> join_msg;
         join_msg.push_back(2);
         join_msg.insert(join_msg.end(), fst.begin(), fst.end());
-        join_msg.push_back(snd >> 8);
-        join_msg.push_back(snd & 0xFF);
-        join_msg.push_back((id >> 24) & 0xFF);
-        join_msg.push_back((id >> 16) & 0xFF);
-        join_msg.push_back((id >> 8) & 0xFF);
-        join_msg.push_back(id & 0xFF);
+        join_msg.push_back(static_cast<uint8_t>(snd >> 8));
+        join_msg.push_back(static_cast<uint8_t>(snd & 0xFF));
+        join_msg.push_back(static_cast<uint8_t>((id >> 24) & 0xFF));
+        join_msg.push_back(static_cast<uint8_t>((id >> 16) & 0xFF));
+        join_msg.push_back(static_cast<uint8_t>((id >> 8) & 0xFF));
+        join_msg.push_back(static_cast<uint8_t>(id & 0xFF));
         _send_spans[handle].push_back(std::move(join_msg));
         setPolloutForHandle(handle);
     } else {
@@ -174,7 +173,7 @@ void rtype::srv::Gateway::_parsePackets()
                     default:
                         throw std::runtime_error("Invalid packet sent by client.");
                 }
-            } catch (const std::exception &_) {
+            } catch (const std::exception&) {
                 parseErrors[handle]++;
                 if (parseErrors[handle] >= MAX_PARSE_ERRORS) {
                     throw std::runtime_error("Client sent too many malformed packets.");

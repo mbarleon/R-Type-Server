@@ -26,7 +26,7 @@ void processSendQueue(const rtype::network::Handle handle, std::deque<SendBuf> &
     while (!sendQueue.empty()) {
         auto &[data, offset] = sendQueue.front();
         const size_t to_send = data.size() - offset;
-        const ssize_t sent = rtype::network::send(handle, data.data() + offset, to_send, 0);
+        const ssize_t sent = rtype::network::send(handle, data.data() + offset, static_cast<rtype::network::BufLen>(to_send), 0);
         if (sent < 0) {
             break;
         }

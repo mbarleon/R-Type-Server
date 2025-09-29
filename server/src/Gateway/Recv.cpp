@@ -6,7 +6,7 @@ void rtype::srv::Gateway::_recvPackets(const network::NFDS i)
     const auto handle = _fds[i].handle;
     std::vector<uint8_t> buffer(1024);
 
-    if (const ssize_t ret = network::recv(handle, buffer.data(), buffer.size(), 0); ret > 0) {
+    if (const ssize_t ret = network::recv(handle, buffer.data(), static_cast<network::BufLen>(buffer.size()), 0); ret > 0) {
         auto &accum = _recv_spans[handle];
         accum.insert(accum.end(), buffer.begin(), buffer.begin() + ret);
         if (accum.size() > MAX_BUFFER_SIZE) {

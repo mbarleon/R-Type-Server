@@ -33,7 +33,9 @@ struct hash<std::array<unsigned char, 16>> {
 
 }// namespace std
 
-struct pair_hash {
+namespace rtype::srv {
+
+struct RTYPE_SRV_API pair_hash {
         std::size_t operator()(const std::pair<std::array<uint8_t, 16>, uint16_t> &p) const
         {
             const std::size_t h1 = std::hash<uint16_t>{}(p.second);
@@ -44,7 +46,7 @@ struct pair_hash {
         }
 };
 
-struct array_hash {
+struct RTYPE_SRV_API array_hash {
         template<typename T, std::size_t N>
         std::size_t operator()(const std::array<T, N> &arr) const
         {
@@ -55,8 +57,6 @@ struct array_hash {
             return hash;
         }
 };
-
-namespace rtype::srv {
 
 class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
 {
