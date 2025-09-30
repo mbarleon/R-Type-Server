@@ -20,7 +20,7 @@ class RTYPE_SRV_API GameServer : public utils::NonCopyable
 {
     public:
         GameServer(const network::Endpoint &baseEndpoint, std::size_t ncores, const network::Endpoint &tcpEndpoint,
-            std::atomic<bool> &quitServer);
+            const network::Endpoint &externalUdpEndpoint, std::atomic<bool> &quitServer);
         ~GameServer() noexcept = default;
 
         void StartServer() noexcept;
@@ -77,6 +77,8 @@ class RTYPE_SRV_API GameServer : public utils::NonCopyable
         bool _is_running = false;
         network::Socket _tcp_sock{};
         ParseErrorsType parseErrors;
+        RecvSpanType _tcp_recv_spans;
+        SendSpanType _tcp_send_spans;
         network::Handle _tcp_handle{};
         RecvPacketsType _recv_packets;
         network::Socket _server_sock{};
@@ -84,8 +86,7 @@ class RTYPE_SRV_API GameServer : public utils::NonCopyable
         network::Endpoint _base_endpoint{};
         network::Endpoint _my_tcp_endpoint{};
         ClientEndpointsType _client_endpoints;
-        RecvSpanType _tcp_recv_spans;
-        SendSpanType _tcp_send_spans;
+        network::Endpoint _external_endpoint{};
         std::atomic<bool> *_quit_server = nullptr;
 };
 

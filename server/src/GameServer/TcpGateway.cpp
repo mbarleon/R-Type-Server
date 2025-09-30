@@ -173,8 +173,8 @@ void rtype::srv::GameServer::_handleOccupancyRequest([[maybe_unused]] const uint
     constexpr uint8_t occupancy = 0;
     std::vector<uint8_t> response;
     response.push_back(21);
-    response.insert(response.end(), _base_endpoint.ip.begin(), _base_endpoint.ip.end());
-    const uint16_t port_be = htons(_base_endpoint.port);
+    response.insert(response.end(), _external_endpoint.ip.begin(), _external_endpoint.ip.end());
+    const uint16_t port_be = htons(_external_endpoint.port);
     const auto port_bytes = reinterpret_cast<const uint8_t *>(&port_be);
     response.insert(response.end(), port_bytes, port_bytes + 2);
     response.push_back(occupancy);

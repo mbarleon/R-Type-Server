@@ -4,12 +4,13 @@
 #include <ranges>
 
 rtype::srv::GameServer::GameServer(const network::Endpoint &baseEndpoint, std::size_t ncores, const network::Endpoint &tcpEndpoint,
-    std::atomic<bool> &quitServer)
+    const network::Endpoint &externalUdpEndpoint, std::atomic<bool> &quitServer)
 {
     _ncores = ncores;
     _quit_server = &quitServer;
     _tcp_endpoint = tcpEndpoint;
     _base_endpoint = baseEndpoint;
+    _external_endpoint = externalUdpEndpoint;
 }
 
 void rtype::srv::GameServer::StartServer() noexcept

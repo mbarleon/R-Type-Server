@@ -68,7 +68,7 @@ static void splitLine(const std::string &line, std::string &key, std::string &va
     val.erase(val.find_last_not_of(" \t") + 1);
 }
 
-static void checkEndpoint(rtype::network::Endpoint &endpoint, const uint16_t default_port)
+static void checkEndpoint(rtype::network::Endpoint &endpoint, std::array<std::uint8_t, 16> default_ip, const uint16_t default_port)
 {
     bool is_zero = true;
 
@@ -79,11 +79,16 @@ static void checkEndpoint(rtype::network::Endpoint &endpoint, const uint16_t def
         }
     }
     if (is_zero) {
-        endpoint.ip = buildIpV4(0, 0, 0, 0);
+        endpoint.ip = default_ip;
     }
     if (endpoint.port == 0) {
         endpoint.port = default_port;
     }
+}
+
+static void checkEndpoint(rtype::network::Endpoint &endpoint, const uint16_t default_port)
+{
+    checkEndpoint(endpoint, buildIpV4(0, 0, 0, 0), default_port);
 }
 
 static void validateConfig(rtype::srv::Config &config)
@@ -97,6 +102,7 @@ static void validateConfig(rtype::srv::Config &config)
     if (config.udp_only) {
         checkEndpoint(config.tcp_endpoint, rtype::srv::default_tcp_port);
         checkEndpoint(config.udp_endpoint, rtype::srv::default_udp_port);
+        checkEndpoint(config.external_udp_endpoint, config.udp_endpoint.ip, config.udp_endpoint.port);
         if (config.tcp_endpoint.port == config.udp_endpoint.port) {
             throw std::invalid_argument("Invalid config file");
         }
@@ -130,6 +136,10 @@ rtype::srv::Config rtype::srv::getConfig(const std::string &filename)
             getIp(val, config.udp_endpoint.ip);
         } else if (key == "udp_port") {
             getPort(val, config.udp_endpoint.port);
+        } else if (key == "udp_external_host") {
+            getIp(val, config.external_udp_endpoint.ip);
+        } else if (key == "udp_external_port") {
+            getPort(val, config.external_udp_endpoint.port);
         } else if (key == "n_cores") {
             std::size_t n_cores;
             if (_SSCANF(val.c_str(), "%zu", &n_cores) != 1 || n_cores == 0) {
