@@ -163,14 +163,15 @@ std::vector<uint8_t> rtype::srv::Gateway::buildJoinMsgForClient(const uint8_t *d
 std::vector<uint8_t> rtype::srv::Gateway::buildJoinMsgForGS(const std::array<uint8_t, 16> &ip, const uint16_t port, const uint32_t id)
 {
     std::vector<uint8_t> join_msg;
-    join_msg.push_back(2);
+    join_msg.reserve(23);
+    join_msg.emplace_back(2);
     join_msg.insert(join_msg.end(), ip.begin(), ip.end());
-    join_msg.push_back(static_cast<uint8_t>(port >> 8));
-    join_msg.push_back(static_cast<uint8_t>(port & 0xFF));
-    join_msg.push_back(static_cast<uint8_t>((id >> 24) & 0xFF));
-    join_msg.push_back(static_cast<uint8_t>((id >> 16) & 0xFF));
-    join_msg.push_back(static_cast<uint8_t>((id >> 8) & 0xFF));
-    join_msg.push_back(static_cast<uint8_t>(id & 0xFF));
+    join_msg.emplace_back(static_cast<uint8_t>(port >> 8));
+    join_msg.emplace_back(static_cast<uint8_t>(port & 0xFF));
+    join_msg.emplace_back(static_cast<uint8_t>((id >> 24) & 0xFF));
+    join_msg.emplace_back(static_cast<uint8_t>((id >> 16) & 0xFF));
+    join_msg.emplace_back(static_cast<uint8_t>((id >> 8) & 0xFF));
+    join_msg.emplace_back(static_cast<uint8_t>(id & 0xFF));
     return join_msg;
 }
 
