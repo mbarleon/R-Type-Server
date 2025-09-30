@@ -10,6 +10,14 @@
 #include <iostream>
 #include <ranges>
 
+/**
+ * @brief Constructs a new GameServer object.
+ *
+ * @param baseEndpoint The base endpoint of the server.
+ * @param ncores The number of cores to use.
+ * @param tcpEndpoint The TCP endpoint of the server.
+ * @param quitServer A reference to an atomic boolean that will be set to true when the server should quit.
+ */
 rtype::srv::GameServer::GameServer(const network::Endpoint &baseEndpoint, std::size_t ncores, const network::Endpoint &tcpEndpoint,
     std::atomic<bool> &quitServer)
 {
@@ -19,6 +27,9 @@ rtype::srv::GameServer::GameServer(const network::Endpoint &baseEndpoint, std::s
     _base_endpoint = baseEndpoint;
 }
 
+/**
+ * @brief Initializes the server.
+ */
 void rtype::srv::GameServer::_initServer()
 {
     network::startup();
@@ -35,11 +46,17 @@ void rtype::srv::GameServer::_initServer()
     _tcp_handle = network::connect(_my_tcp_endpoint, _tcp_endpoint, network::Protocol::TCP);
 }
 
+/**
+ * @brief The main server loop.
+ */
 void rtype::srv::GameServer::_serverLoop()
 {
     while (!(*_quit_server)) {}
 }
 
+/**
+ * @brief Cleans up the server's resources.
+ */
 void rtype::srv::GameServer::_cleanupServer()
 {
     for (auto &sock : _sockets | std::views::values) {
@@ -57,6 +74,9 @@ void rtype::srv::GameServer::_cleanupServer()
     network::cleanup();
 }
 
+/**
+ * @brief Starts the server.
+ */
 void rtype::srv::GameServer::StartServer() noexcept
 {
     if (_is_running) {
