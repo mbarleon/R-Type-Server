@@ -233,8 +233,6 @@ std::vector<uint32_t> rtype::srv::Gateway::parseGIDs(const uint8_t *data, const 
 
 void rtype::srv::Gateway::_parsePackets()
 {
-    std::unordered_map<network::Handle, int> parseErrors;
-
     for (auto &[handle, buf] : _recv_spans) {
         std::size_t offset = 0;
         while (offset < buf.size()) {
@@ -263,8 +261,8 @@ void rtype::srv::Gateway::_parsePackets()
                         throw std::runtime_error("Invalid packet sent by client.");
                 }
             } catch (const std::exception &) {
-                parseErrors[handle]++;
-                if (parseErrors[handle] >= MAX_PARSE_ERRORS) {
+                _parseErrors[handle]++;
+                if (_parseErrors[handle] >= MAX_PARSE_ERRORS) {
                     throw std::runtime_error("Client sent too many malformed packets.");
                 }
                 break;

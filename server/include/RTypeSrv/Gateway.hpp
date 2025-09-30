@@ -17,10 +17,8 @@
 #include <unordered_map>
 #include <vector>
 
-namespace std {
-
 template<>
-struct hash<std::array<unsigned char, 16>> {
+struct std::hash<std::array<unsigned char, 16>> {
         std::size_t operator()(const std::array<unsigned char, 16> &arr) const noexcept
         {
             std::size_t h = 0;
@@ -30,8 +28,6 @@ struct hash<std::array<unsigned char, 16>> {
             return h;
         }
 };
-
-}// namespace std
 
 namespace rtype::srv {
 
@@ -43,7 +39,7 @@ struct RTYPE_SRV_API pair_hash {
             for (const auto b : p.first)
                 h2 ^= std::hash<uint8_t>{}(b) + 0x9e3779b9 + (h2 << 6) + (h2 >> 2);
             return h1 ^ (h2 << 1);
-        }
+        };
 };
 
 struct RTYPE_SRV_API array_hash {
@@ -55,7 +51,7 @@ struct RTYPE_SRV_API array_hash {
                 hash ^= std::hash<T>{}(elem) + 0x9e3779b9 + (hash << 6) + (hash >> 2);
             }
             return hash;
-        }
+        };
 };
 
 class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
@@ -71,7 +67,7 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         ~Gateway() noexcept = default;
 
     private:
-        static constexpr int MAX_PARSE_ERRORS = 3;
+        static constexpr uint8_t MAX_PARSE_ERRORS = 3;
         static constexpr size_t MAX_BUFFER_SIZE = 64 * 1024;
         static constexpr auto OCCUPANCY_INTERVAL = std::chrono::seconds(60);
 
@@ -81,6 +77,7 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         using FdsType = std::vector<network::PollFD>;
         using GameToGsType = std::unordered_map<uint32_t, IP>;
         using GsRegistryType = std::unordered_map<IP, int, pair_hash>;
+        using ParseErrorsType = std::unordered_map<network::Handle, uint8_t>;
         using OccupancyCacheType = std::unordered_map<IP, uint8_t, pair_hash>;
         using SocketsMapType = std::unordered_map<std::size_t, network::Socket>;
         using GsAddrToHandleType = std::unordered_map<IP, network::Handle, pair_hash>;
@@ -133,6 +130,7 @@ class RTYPE_SRV_API Gateway final : public utils::Singleton<Gateway>
         bool _is_running = false;
         GameToGsType _game_to_gs;
         GsRegistryType _gs_registry;
+        ParseErrorsType _parseErrors;
         network::Endpoint _tcp_endpoint{};
         PendingCreatesType _pending_creates;
         OccupancyCacheType _occupancy_cache;
