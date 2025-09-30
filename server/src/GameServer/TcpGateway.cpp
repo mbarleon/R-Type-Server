@@ -137,7 +137,7 @@ void rtype::srv::GameServer::_sendGSRegistration()
 {
     std::vector<uint8_t> packet;
 
-    packet.push_back(22);
+    packet.push_back(20);
     packet.insert(packet.end(), _base_endpoint.ip.begin(), _base_endpoint.ip.end());
     const uint16_t port_be = htons(_base_endpoint.port);
     const auto port_bytes = reinterpret_cast<const uint8_t *>(&port_be);
