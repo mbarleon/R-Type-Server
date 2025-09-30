@@ -1,5 +1,4 @@
 #pragma once
-#include <__ranges/elements_view.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

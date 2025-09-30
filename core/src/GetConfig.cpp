@@ -68,7 +68,7 @@ static void splitLine(const std::string &line, std::string &key, std::string &va
     val.erase(val.find_last_not_of(" \t") + 1);
 }
 
-static void checkEndpoint(rtype::network::Endpoint &endpoint, std::array<std::uint8_t, 16> default_ip, const uint16_t default_port)
+static void checkEndpoint(rtype::network::Endpoint &endpoint, const std::array<std::uint8_t, 16> &default_ip, const uint16_t default_port)
 {
     bool is_zero = true;
 

@@ -5,7 +5,10 @@
 #include <cerrno>
 #include <cstring>
 #include <deque>
-#include <netinet/in.h>
+
+#if !defined(_WIN32)
+    #include <netinet/in.h>
+#endif
 
 namespace {
 
@@ -71,7 +74,13 @@ void rtype::srv::GameServer::_recvTcpPackets()
         throw std::runtime_error("TCP gateway closed connection");
     } else {
         if (errno != EAGAIN && errno != EWOULDBLOCK) {
+#if defined(_WIN32)
+            char error_buf[256];
+            strerror_s(error_buf, sizeof(error_buf), errno);
+            throw std::runtime_error("TCP recv error: " + std::string(error_buf));
+#else
             throw std::runtime_error("TCP recv error: " + std::string(strerror(errno)));
+#endif
         }
     }
 }
